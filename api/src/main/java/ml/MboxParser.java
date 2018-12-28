@@ -10,8 +10,16 @@ import java.util.Properties;
 
 final class MboxParser {
 
+    /**
+     * Intentionally empty
+     */
     private MboxParser() {  }
 
+    /**
+     *
+     * @param path
+     * @return
+     */
     static Message[] readFromMboxFile(Path path) {
         Logger logger = LoggerFactory.getLogger(Runner.class);
         Message[] emails = new Message[0];

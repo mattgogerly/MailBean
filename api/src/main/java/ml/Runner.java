@@ -10,6 +10,10 @@ import java.nio.file.Path;
 
 public class Runner {
 
+    /**
+     *
+     * @param args
+     */
     public static void main(String[] args) {
         Logger logger = LoggerFactory.getLogger(Runner.class);
         URL resource = Runner.class.getClassLoader().getResource("phishing.mbox");

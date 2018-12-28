@@ -10,13 +10,21 @@ import javax.mail.internet.MimeBodyPart;
 import javax.mail.internet.MimeMultipart;
 import java.io.IOException;
 
+
 class FeatureExtractor {
 
-    private String emailBody;
-    private Document body;
+    private String emailBody; // body of the email needs to be accessed throughout class
+    private Document body; // parsed HTML from Jsoup
 
+    /**
+     * Intentionally empty
+     */
     FeatureExtractor() {}
 
+    /**
+     *
+     * @param msg
+     */
     void extractFeatures(Message msg) {
         try {
             // extract the body once to avoid repetition
@@ -31,9 +39,14 @@ class FeatureExtractor {
         // we've selected 25 features so we must extract them individually
         // each feature is extracted by its own method for easy changes in the future
         int numAttachments = getNumAttachments(msg);
-        int numLinks = getNumLinks(msg);
+        int numLinks = getNumLinks();
     }
 
+    /**
+     *
+     * @param msg
+     * @return
+     */
     private int getNumAttachments(Message msg) {
         int count = 0;
 
@@ -72,12 +85,23 @@ class FeatureExtractor {
         return count;
     }
 
-    private int getNumLinks(Message msg) {
+    /**
+     *
+     * @return
+     */
+    private int getNumLinks() {
         // we only care about HTML <a href> tags, not raw links (see Fette et al)
         Elements links = this.body.select("a[href]");
         return links.size();
     }
 
+    /**
+     *
+     * @param msg
+     * @return
+     * @throws IOException
+     * @throws MessagingException
+     */
     // adapted from https://stackoverflow.com/a/36932127
     private String getMessageContent(Message msg) throws IOException, MessagingException {
         String result = "";
@@ -92,6 +116,13 @@ class FeatureExtractor {
         return result;
     }
 
+    /**
+     *
+     * @param multipart
+     * @return
+     * @throws IOException
+     * @throws MessagingException
+     */
     // adapted from https://stackoverflow.com/a/36932127
     private String extractFromMultipart(MimeMultipart multipart) throws IOException, MessagingException {
         int parts = multipart.getCount();
@@ -114,6 +145,13 @@ class FeatureExtractor {
         return result.toString();
     }
 
+    /**
+     *
+     * @param part
+     * @return
+     * @throws IOException
+     * @throws MessagingException
+     */
     // adapted from https://stackoverflow.com/a/36932127
     private String extractFromPart(BodyPart part) throws IOException, MessagingException {
         String result = "";
