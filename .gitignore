@@ -4,3 +4,7 @@ api/src/.DS_Store
 api/src/main/.DS_Store
 api/src/main/resources/.DS_Store
 api/target
+api/dataset/.DS_Store
+api/dataset/.DS_Store
+api/dataset/non-phishing/.DS_Store
+api/dataset/phishing/.DS_Store
