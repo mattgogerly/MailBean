@@ -9,26 +9,30 @@ import javax.mail.internet.ContentType;
 import javax.mail.internet.MimeBodyPart;
 import javax.mail.internet.MimeMultipart;
 import java.io.IOException;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 
 class FeatureExtractor {
 
+    private Message msg;
     private String emailBody; // body of the email needs to be accessed throughout class
     private Document body; // parsed HTML from Jsoup
 
     /**
-     * Intentionally empty
+     * Constructor for the FeatureSelector class
      */
-    FeatureExtractor() {}
+    FeatureExtractor(Message msg) {
+        this.msg = msg;
+    }
 
     /**
-     *
-     * @param msg the email message we are extracting features for
+     * Method to coordinate feature extraction
      */
-    void extractFeatures(Message msg) {
+    void extractFeatures() {
         try {
             // extract the body once to avoid repetition
-            this.emailBody = getMessageContent(msg);
+            this.emailBody = getMessageContent();
         } catch (Exception e) {
             this.emailBody = "";
         }
@@ -38,21 +42,32 @@ class FeatureExtractor {
 
         // we've selected 25 features so we must extract them individually
         // each feature is extracted by its own method for easy changes in the future
-        int numAttachments = getNumAttachments(msg);
+        int numAttachments = getNumAttachments();
         int numLinks = getNumLinks();
+        int numLinksClickHere = getNumLinksClickHere();
+        int numIpUrl = getNumIpUrl();
+        int numUrlExt = getNumLinksFileExt();
+
+        try {
+            if (numUrlExt > 10) {
+                System.out.println(msg.getSubject());
+                System.out.println(numUrlExt);
+            }
+        } catch (Exception e) {
+
+        }
     }
 
     /**
-     *
-     * @param msg: the message we are extracting features for
+     * Method to get the number of email attachments
      * @return int number of attachments the message has
      */
-    private int getNumAttachments(Message msg) {
+    private int getNumAttachments() {
         int count = 0;
 
         String type = "";
         try {
-            type = msg.getContentType(); // get type of email
+            type = this.msg.getContentType(); // get type of email
         } catch (MessagingException e) {
             e.printStackTrace();
             // TODO: error handling
@@ -63,7 +78,7 @@ class FeatureExtractor {
             int parts; // number of parts
 
             try {
-                multipart = (Multipart) msg.getContent(); // get the content
+                multipart = (Multipart) this.msg.getContent(); // get the content
                 parts = multipart.getCount();
             } catch (Exception e) {
                 return 0; // can't get the content so just return 0
@@ -86,7 +101,7 @@ class FeatureExtractor {
     }
 
     /**
-     *
+     * Method to get the number of HTML links in a message
      * @return int number of <a href> tags in the HTML body of the message
      */
     private int getNumLinks() {
@@ -95,21 +110,53 @@ class FeatureExtractor {
         return links.size();
     }
 
+    private int getNumLinksClickHere() {
+        String regex = "^(here|click|login|link|update)"; //  regex matches words we're looking for in links
+        Elements links = this.body.select("a[href]:matches(" + regex + ")"); //  get <a href> that contains regex
+        return links.size(); // return number of them
+    }
+
+    private int getNumIpUrl() {
+        // Regex from OWASP Validation Regex Repository
+        // https://www.owasp.org/index.php/OWASP_Validation_Regex_Repository
+        Pattern p = Pattern.compile("https?://(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?).(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?).(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?).(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)");
+        Matcher m = p.matcher(this.emailBody);
+
+        return countRegexMatches(m);
+    }
+
+    private int getNumLinksFileExt() {
+        Pattern p = Pattern.compile("\\.\\w{3,4}($|\\?)"); // matches .aaa or .bbbb
+        Matcher m = p.matcher(this.emailBody);
+
+        return countRegexMatches(m);
+    }
+
+    private int countRegexMatches(Matcher m) {
+        int count = 0;
+        int i = 0;
+        while (m.find(i)) {
+            count++;
+            i = m.start() + 1; // prevent overlaps
+        }
+
+        return count;
+    }
+
     /**
      * Utility method to get the body of a message
-     * @param msg: message we are extracting features for
      * @return String body of the message
      * @throws IOException when file is not found/other file errors
      * @throws MessagingException when body of message is invalid
      */
     // adapted from https://stackoverflow.com/a/36932127
-    private String getMessageContent(Message msg) throws IOException, MessagingException {
+    private String getMessageContent() throws IOException, MessagingException {
         String result = "";
 
-        if (msg.isMimeType("text/plain") || msg.isMimeType("text/html")) {
-            result = msg.getContent().toString();
-        } else if (msg.isMimeType("multipart/*")) {
-            MimeMultipart multipart = (MimeMultipart) msg.getContent();
+        if (this.msg.isMimeType("text/plain") || this.msg.isMimeType("text/html")) {
+            result = this.msg.getContent().toString();
+        } else if (this.msg.isMimeType("multipart/*")) {
+            MimeMultipart multipart = (MimeMultipart) this.msg.getContent();
             result = extractFromMultipart(multipart);
         }
 

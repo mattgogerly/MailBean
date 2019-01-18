@@ -22,8 +22,10 @@ public class Runner {
             Path path = new File(resource.toURI()).toPath();
             Message[] emails = MboxParser.readFromMboxFile(path);
 
-            FeatureExtractor fe = new FeatureExtractor();
-            fe.extractFeatures(emails[0]);
+            for (Message m : emails) {
+                FeatureExtractor fe = new FeatureExtractor(m);
+                fe.extractFeatures();
+            }
         } catch (Exception e) {
             logger.error("mbox file not found", e);
         }
