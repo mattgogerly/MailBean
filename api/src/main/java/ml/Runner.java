@@ -10,6 +10,10 @@ import java.nio.file.Path;
 
 public class Runner {
 
+    /**
+     *
+     * @param args
+     */
     public static void main(String[] args) {
         Logger logger = LoggerFactory.getLogger(Runner.class);
         URL resource = Runner.class.getClassLoader().getResource("phishing.mbox");
@@ -17,6 +21,9 @@ public class Runner {
         try {
             Path path = new File(resource.toURI()).toPath();
             Message[] emails = MboxParser.readFromMboxFile(path);
+
+            FeatureExtractor fe = new FeatureExtractor();
+            fe.extractFeatures(emails[0]);
         } catch (Exception e) {
             logger.error("mbox file not found", e);
         }
