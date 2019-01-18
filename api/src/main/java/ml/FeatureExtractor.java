@@ -23,7 +23,7 @@ class FeatureExtractor {
 
     /**
      *
-     * @param msg
+     * @param msg the email message we are extracting features for
      */
     void extractFeatures(Message msg) {
         try {
@@ -44,8 +44,8 @@ class FeatureExtractor {
 
     /**
      *
-     * @param msg
-     * @return
+     * @param msg: the message we are extracting features for
+     * @return int number of attachments the message has
      */
     private int getNumAttachments(Message msg) {
         int count = 0;
@@ -87,7 +87,7 @@ class FeatureExtractor {
 
     /**
      *
-     * @return
+     * @return int number of <a href> tags in the HTML body of the message
      */
     private int getNumLinks() {
         // we only care about HTML <a href> tags, not raw links (see Fette et al)
@@ -96,11 +96,11 @@ class FeatureExtractor {
     }
 
     /**
-     *
-     * @param msg
-     * @return
-     * @throws IOException
-     * @throws MessagingException
+     * Utility method to get the body of a message
+     * @param msg: message we are extracting features for
+     * @return String body of the message
+     * @throws IOException when file is not found/other file errors
+     * @throws MessagingException when body of message is invalid
      */
     // adapted from https://stackoverflow.com/a/36932127
     private String getMessageContent(Message msg) throws IOException, MessagingException {
@@ -117,11 +117,11 @@ class FeatureExtractor {
     }
 
     /**
-     *
-     * @param multipart
-     * @return
-     * @throws IOException
-     * @throws MessagingException
+     * Utility method to get the body of a multipart message
+     * @param multipart the part we are extracting from
+     * @return String of multipart section of body
+     * @throws IOException when file is not found/other file errors
+     * @throws MessagingException when body of message is invalid
      */
     // adapted from https://stackoverflow.com/a/36932127
     private String extractFromMultipart(MimeMultipart multipart) throws IOException, MessagingException {
@@ -146,11 +146,11 @@ class FeatureExtractor {
     }
 
     /**
-     *
-     * @param part
-     * @return
-     * @throws IOException
-     * @throws MessagingException
+     * Utility method to get the body of a multipart message
+     * @param part the part we are extracting from
+     * @return String of multipart section of body
+     * @throws IOException when file is not found/other file errors
+     * @throws MessagingException when body of message is invalid
      */
     // adapted from https://stackoverflow.com/a/36932127
     private String extractFromPart(BodyPart part) throws IOException, MessagingException {
