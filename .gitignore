@@ -8,3 +8,5 @@ api/dataset/.DS_Store
 api/dataset/.DS_Store
 api/dataset/non-phishing/.DS_Store
 api/dataset/phishing/.DS_Store
+
+/.idea
