@@ -1,5 +1,6 @@
 package ml;
 
+import com.sun.mail.util.QPDecoderStream;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.jsoup.select.Elements;
@@ -8,7 +9,11 @@ import javax.mail.*;
 import javax.mail.internet.ContentType;
 import javax.mail.internet.MimeBodyPart;
 import javax.mail.internet.MimeMultipart;
+import java.io.BufferedInputStream;
+import java.io.ByteArrayOutputStream;
 import java.io.IOException;
+import java.util.Arrays;
+import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -47,11 +52,13 @@ class FeatureExtractor {
         int numLinksClickHere = getNumLinksClickHere();
         int numIpUrl = getNumIpUrl();
         int numUrlExt = getNumLinksFileExt();
+        boolean htmlJavascript = checkHtmlJavascript();
+        int numRecipients = getNumRecipients();
+        boolean htmlBody = checkHtmlBody();
 
         try {
-            if (numUrlExt > 10) {
+            if (!htmlBody) {
                 System.out.println(msg.getSubject());
-                System.out.println(numUrlExt);
             }
         } catch (Exception e) {
 
@@ -132,6 +139,30 @@ class FeatureExtractor {
         return countRegexMatches(m);
     }
 
+    private boolean checkHtmlJavascript() {
+        Elements scripts = this.body.select("script[type='text/javascript']"); // get all JS script elements
+        return scripts.size() > 0;
+    }
+
+    private int getNumRecipients() {
+        try {
+            Address[] recipients = this.msg.getAllRecipients();
+
+            if (recipients != null) {
+                return recipients.length;
+            } else {
+                return 0;
+            }
+        } catch (MessagingException e) {
+            return 0; // just return 0 if there's an error
+        }
+    }
+
+    private boolean checkHtmlBody() {
+        List<String> htmlTags = Arrays.asList("html", "head", "body");
+        return htmlTags.stream().parallel().anyMatch(this.emailBody.toLowerCase()::contains);
+    }
+
     private int countRegexMatches(Matcher m) {
         int count = 0;
         int i = 0;
@@ -178,7 +209,7 @@ class FeatureExtractor {
             throw new MessagingException("Multipart must have constituent parts.");
         }
 
-        boolean alternative = new ContentType(multipart.getContentType()).match("multipart/alternative");
+        boolean alternative = new ContentType(multipart.getContentType()).toString().contains("multipart/alternative");
         if (alternative) {
             return extractFromPart(multipart.getBodyPart(parts - 1));
         }
@@ -201,12 +232,24 @@ class FeatureExtractor {
      */
     // adapted from https://stackoverflow.com/a/36932127
     private String extractFromPart(BodyPart part) throws IOException, MessagingException {
-        String result = "";
+        String result;
 
-        if (part.isMimeType("text/plain") || part.isMimeType("text/html")) {
-            result = part.getContent().toString();
-        } else if (part.getContent() instanceof MimeMultipart) {
+        if (part.getContent() instanceof MimeMultipart) {
             result = extractFromMultipart((MimeMultipart) part.getContent());
+        } else if (part.getContent() instanceof QPDecoderStream) {
+            BufferedInputStream i = new BufferedInputStream((QPDecoderStream) part.getContent());
+            ByteArrayOutputStream o = new ByteArrayOutputStream();
+
+            while (true) {
+                int c = i.read();
+                if (c == -1) { break; }
+                o.write(c);
+            }
+
+            i.close();
+            result = new String(o.toByteArray());
+        } else {
+            result = part.getContent().toString();
         }
 
         return result;
