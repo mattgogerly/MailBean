@@ -1,0 +1,30 @@
+.auth-container {
+  min-height: 100vh;
+}
+
+.auth {
+  width: 30%;
+  text-align: center;
+  justify-content: center;
+}
+
+.logo {
+  height: 100px;
+  width: 75px;
+}
+
+.provider-logo {
+  height: 60%;
+}
+
+.provider-list .mat-list-item {
+  height: 80px !important;
+}
+
+.provider-list .mat-list-item:hover {
+  background: rgba(0,0,0,0.08);
+}
+
+.mat-list-item-content {
+  justify-content: center;
+}

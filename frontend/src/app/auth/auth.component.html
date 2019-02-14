@@ -1,0 +1,22 @@
+<div fxLayout="column" fxLayoutAlign="center center" fxLayoutGap="20px" class="auth-container">
+  <img [src]="'assets/img/logo.png'" class="logo" alt="logo" />
+
+  <mat-card class="auth" fxLayout="column">
+    <mat-card-title>
+      Let's get started!
+    </mat-card-title>
+    <mat-card-subtitle>
+      Choose your email provider below..
+    </mat-card-subtitle>
+
+    <mat-card-content>
+      <mat-list class="provider-list">
+        <a (click)="beginAuth(provider)" *ngFor="let provider of providers">
+          <mat-list-item>
+            <img [src]="'assets/img/providers/' + provider.img" [alt]="provider.name" class="provider-logo">
+          </mat-list-item>
+        </a>
+      </mat-list>
+    </mat-card-content>
+  </mat-card>
+</div>

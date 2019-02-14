@@ -4,9 +4,16 @@ const path = require('path');
 let win;
 
 function createWindow() {
-  win = new BrowserWindow({width: 800, height: 600});
+  win = new BrowserWindow({
+    width: 800,
+    height: 600,
+    webPreferences: {
+      //nodeIntegration: false
+    }
+  });
 
-  win.loadFile(path.join(__dirname, '/dist/index.html'));
+  win.loadURL("http://localhost:4200/auth");
+  // win.loadFile(path.join(__dirname, '/dist/index.html'));
   win.webContents.openDevTools();
 
   win.on('closed', () => {
