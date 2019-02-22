@@ -30,7 +30,12 @@ class FeatureWriter {
 
                 // write each key followed by a comma (CSV)
                 for (String k : keys) {
-                    bw.write(k + ",");
+                    if (k.equals("true") || k.equals("false")) {
+                        bw.write(k.equals("true") ? 1 : 0);
+                        bw.write(",");
+                    } else {
+                        bw.write(k + ",");
+                    }
                 }
 
                 // write the classification header and a new line
