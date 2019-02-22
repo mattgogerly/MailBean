@@ -1,0 +1,23 @@
+.other-container {
+  min-height: 100vh;
+}
+
+.other-card {
+  width: 500px;
+  text-align: center;
+  align-items: center;
+  justify-content: center;
+}
+
+.basic-details-form {
+  width: 300px;
+}
+
+.basic-details-container > * {
+  width: 100%;
+}
+
+.basic-button-container {
+  align-items: center;
+  justify-content: center;
+}
