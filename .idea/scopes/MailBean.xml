@@ -1,3 +1,0 @@
-<component name="DependencyValidationManager">
-  <scope name="MailBean" pattern="src[api]:ml.*" />
-</component>
