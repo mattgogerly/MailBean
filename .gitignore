@@ -10,7 +10,7 @@ api/dataset/non-phishing/.DS_Store
 api/dataset/phishing/.DS_Store
 
 # IDEs and editors
-/.idea
+.idea/
 .project
 .classpath
 .c9/
