@@ -1,4 +1,5 @@
-const {app, BrowserWindow} = require('electron');
+const {app, BrowserWindow, ipcMain} = require('electron');
+const keytar = require('keytar');
 const path = require('path');
 
 let win;
@@ -8,7 +9,7 @@ function createWindow() {
     width: 800,
     height: 600,
     webPreferences: {
-      //nodeIntegration: false
+      nodeIntegration: true
     }
   });
 
@@ -33,4 +34,16 @@ app.on('activate', () => {
   if (win === null) {
     createWindow();
   }
+});
+
+ipcMain.on('get-password', (event, id) => {
+  event.returnValue = keytar.getPassword('MailBean', id);
+});
+
+ipcMain.on('set-password', (event, id, pass) => {
+  event.returnValue = keytar.setPassword('MailBean', id, pass);
+});
+
+ipcMain.on('delete-password', (event, id) => {
+  event.returnValue = keytar.deletePassword('MailBean', id);
 });
