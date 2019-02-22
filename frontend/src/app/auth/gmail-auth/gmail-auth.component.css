@@ -1,0 +1,10 @@
+.gmail-container {
+  min-height: 100vh;
+}
+
+.gmail-card {
+  width: 400px;
+  text-align: center;
+  align-items: center;
+  justify-content: center;
+}

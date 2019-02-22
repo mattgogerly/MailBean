@@ -1,3 +1,38 @@
-<p>
-  gmail-auth works!
-</p>
+<div fxLayout="column" fxLayoutAlign="center center" fxLayoutGap="20px" class="gmail-container">
+  <mat-card class="gmail-card" fxLayout="column" *ngIf="authStatus === 'complete'">
+    <mat-card-title>
+      You're all set!
+    </mat-card-title>
+    <mat-card-subtitle>
+      One moment while we finish setting up.
+    </mat-card-subtitle>
+    <mat-card-content>
+      <i class="material-icons md-48">check</i>
+    </mat-card-content>
+  </mat-card>
+
+  <mat-card class="gmail-card" fxLayout="column" *ngIf="authStatus === 'pending'">
+    <mat-card-title>
+      Waiting for authorisation
+    </mat-card-title>
+    <mat-card-subtitle>
+      A window should have opened in your browser asking for permissions.
+    </mat-card-subtitle>
+    <mat-card-content fxLayout="column" fxLayoutAlign="center center" fxLayoutGap="20px">
+      <mat-spinner [diameter]="48"></mat-spinner>
+      <button [routerLink]="'/auth'" mat-stroked-button>Go back</button>
+    </mat-card-content>
+  </mat-card>
+
+  <mat-card class="gmail-card" fxLayout="column" *ngIf="authStatus === 'error'">
+    <mat-card-title>
+      Error
+    </mat-card-title>
+    <mat-card-subtitle>
+      There seems to have been a problem getting permission to access your account.
+    </mat-card-subtitle>
+    <mat-card-content>
+      <button mat-stroked-button>Go back</button>
+    </mat-card-content>
+  </mat-card>
+</div>

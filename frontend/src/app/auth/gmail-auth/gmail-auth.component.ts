@@ -1,6 +1,8 @@
-import { Component, OnInit } from '@angular/core';
+import { ChangeDetectorRef, Component, OnInit } from '@angular/core';
 import { shell } from 'electron';
-const server = require('node-http-server');
+import { AccountHandler } from '../utils/AccountHandler';
+import * as http from 'http';
+import * as url from 'url';
 
 @Component({
   selector: 'app-gmail-auth',
@@ -9,47 +11,50 @@ const server = require('node-http-server');
 })
 export class GmailAuthComponent implements OnInit {
 
-  private LOCAL_SERVER_PORT = 18363;
-  private REDIRECT_URL = 'http://127.0.0.1' + this.LOCAL_SERVER_PORT;
-  private CLIENT_ID = '634807762350-ohpmnrkua0cj7nlkfkpbvlirn1dchudh.apps.googleusercontent.com';
-  private GMAIL_SCOPES = [
-    'https://www.googleapis.com/auth/userinfo.email', // email address
-    'https://www.googleapis.com/auth/userinfo.profile', // G+ profile
-    'https://mail.google.com/', // email
-    'https://www.googleapis.com/auth/contacts.readonly', // contacts
-  ];
+  private AccountHandler: AccountHandler;
   private server: any;
+  authStatus = 'pending';
 
-  constructor() { }
+  constructor(private changeDetectorRef: ChangeDetectorRef) {
+    this.AccountHandler = new AccountHandler();
+  }
 
   ngOnInit() {
     shell.openExternal(this.buildAuthURL());
 
-    const config = new server.Config();
-    config.port = this.LOCAL_SERVER_PORT;
-    server.onRequest = this.onRequestReceived;
-    server.deploy(config);
-  }
-
-  private onRequestReceived(req, res, serve) {
-    const code = req.query.code;
-    console.log(code);
-    this.onCodeReceived(code);
-    return false;
+    this.server = http.createServer((req, res) => {
+      const { query } = url.parse(req.url, true);
+      if (query.code) {
+        this.onCodeReceived(query.code);
+        // redirect to a nicer static page here
+        res.end();
+      } else {
+        res.end('Error');
+        this.authStatus = 'error';
+      }
+    });
+    this.server.listen(this.AccountHandler.LOCAL_SERVER_PORT, err => {
+      if (err) {
+        console.error(err);
+      }
+    });
   }
 
   private async onCodeReceived(code) {
-    let account = null;
     try {
-      account = 'hi';
+      await this.AccountHandler.constructGmailAccount(code);
+      this.authStatus = 'complete';
+      this.changeDetectorRef.detectChanges();
     } catch (err) {
       console.error(err);
+      this.authStatus = 'error';
     }
   }
 
   private buildAuthURL() {
-    return 'https://accounts.google.com/o/oauth2/auth?client_id=' + this.CLIENT_ID + '&redirect_uri=' +
-      encodeURIComponent(this.REDIRECT_URL) + '&response_type=code&scope=' + encodeURIComponent(this.GMAIL_SCOPES.join(' ')) +
+    const localServer = this.AccountHandler.LOCAL_SERVER_HOST + ':' + this.AccountHandler.LOCAL_SERVER_PORT;
+    return 'https://accounts.google.com/o/oauth2/auth?client_id=' + this.AccountHandler.CLIENT_ID + '&redirect_uri=' +
+      encodeURIComponent(localServer) + '&response_type=code&scope=' + encodeURIComponent(this.AccountHandler.GMAIL_SCOPES.join(' ')) +
       '&access_type=offline&select_account%20consent';
   }
 
