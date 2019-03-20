@@ -1,18 +1,26 @@
-import { ChangeDetectorRef, Component, OnInit } from '@angular/core';
+import { ChangeDetectorRef, Component, OnDestroy, OnInit } from '@angular/core';
 import { shell } from 'electron';
 import { AccountHandler } from '../utils/AccountHandler';
-import * as http from 'http';
 import * as url from 'url';
+import * as http from 'http';
 
 @Component({
   selector: 'app-gmail-auth',
   templateUrl: './gmail-auth.component.html',
   styleUrls: ['./gmail-auth.component.css']
 })
-export class GmailAuthComponent implements OnInit {
+export class GmailAuthComponent implements OnInit, OnDestroy {
 
   private AccountHandler: AccountHandler;
-  private server: any;
+  private server: http.Server;
+  private LOCAL_SERVER_URI = 'http://127.0.0.1:18363/';
+  private LOCAL_SERVER_PORT = 18363;
+  public GMAIL_SCOPES = [
+    'https://www.googleapis.com/auth/userinfo.email', // email address
+    'https://www.googleapis.com/auth/userinfo.profile', // G+ profile
+    'https://mail.google.com/', // email
+    'https://www.googleapis.com/auth/contacts.readonly', // contacts
+  ];
   authStatus = 'pending';
 
   constructor(private changeDetectorRef: ChangeDetectorRef) {
@@ -20,31 +28,32 @@ export class GmailAuthComponent implements OnInit {
   }
 
   ngOnInit() {
-    shell.openExternal(this.buildAuthURL());
+    const responseHandler = (request, response) => {
+      const { query } = url.parse(request.url, true);
 
-    this.server = http.createServer((req, res) => {
-      const { query } = url.parse(req.url, true);
+      response.writeHead(302, {Location: 'https://google.co.uk'});
+      response.end();
+
       if (query.code) {
         this.onCodeReceived(query.code);
-        // redirect to a nicer static page here
-        res.end();
-      } else {
-        res.end('Error');
-        this.authStatus = 'error';
       }
+    };
+
+    this.server = http.createServer(responseHandler)
+      .listen(this.LOCAL_SERVER_PORT, () => {
+        console.log('Running...');
     });
-    this.server.listen(this.AccountHandler.LOCAL_SERVER_PORT, err => {
-      if (err) {
-        console.error(err);
-      }
-    });
+    shell.openExternal(this.buildAuthURL());
+  }
+
+  ngOnDestroy() {
+    this.server.close();
   }
 
   private async onCodeReceived(code) {
     try {
       await this.AccountHandler.constructGmailAccount(code);
       this.authStatus = 'complete';
-      this.changeDetectorRef.detectChanges();
     } catch (err) {
       console.error(err);
       this.authStatus = 'error';
@@ -52,10 +61,9 @@ export class GmailAuthComponent implements OnInit {
   }
 
   private buildAuthURL() {
-    const localServer = this.AccountHandler.LOCAL_SERVER_HOST + ':' + this.AccountHandler.LOCAL_SERVER_PORT;
     return 'https://accounts.google.com/o/oauth2/auth?client_id=' + this.AccountHandler.CLIENT_ID + '&redirect_uri=' +
-      encodeURIComponent(localServer) + '&response_type=code&scope=' + encodeURIComponent(this.AccountHandler.GMAIL_SCOPES.join(' ')) +
-      '&access_type=offline&select_account%20consent';
+      encodeURIComponent(this.LOCAL_SERVER_URI) + '&response_type=code&scope=' +
+      encodeURIComponent(this.GMAIL_SCOPES.join(' ')) + '&access_type=offline&select_account%20consent';
   }
 
 }
