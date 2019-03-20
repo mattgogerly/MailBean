@@ -1,6 +1,6 @@
 const {app, BrowserWindow, ipcMain} = require('electron');
 const keytar = require('keytar');
-const path = require('path');
+const { default: installExtension, REDUX_DEVTOOLS } = require('electron-devtools-installer');
 
 let win;
 
@@ -13,7 +13,7 @@ function createWindow() {
     }
   });
 
-  win.loadURL("http://localhost:4200/auth");
+  win.loadURL("http://localhost:4200/");
   // win.loadFile(path.join(__dirname, '/dist/index.html'));
   win.webContents.openDevTools();
 
@@ -22,7 +22,12 @@ function createWindow() {
   });
 }
 
-app.on('ready', createWindow);
+app.on('ready', function() {
+  createWindow();
+  installExtension(REDUX_DEVTOOLS)
+    .then((name) => console.log(`Added Extension:  ${name}`))
+    .catch((err) => console.log('An error occurred: ', err));
+});
 
 app.on('window-all-closed', () => {
   if (process.platform !== 'darwin') {
@@ -37,7 +42,9 @@ app.on('activate', () => {
 });
 
 ipcMain.on('get-password', (event, id) => {
-  event.returnValue = keytar.getPassword('MailBean', id);
+  keytar.getPassword('MailBean', id).then( result => {
+    event.returnValue = result;
+  });
 });
 
 ipcMain.on('set-password', (event, id, pass) => {
