@@ -4,68 +4,85 @@ import * as crypto from 'crypto';
 import { ipcRenderer } from 'electron';
 import { Injectable } from '@angular/core';
 import { AppInjector} from '../../app-injector';
+import { Store } from '@ngrx/store';
+import { AddAccountPending } from '../../redux/actions/account.actions';
 
 @Injectable()
 export class AccountHandler {
   private http: HttpClient;
-  public LOCAL_SERVER_HOST = 'http://127.0.0.1';
-  public LOCAL_SERVER_PORT = 18363;
+  private store: Store<any>;
+
+  public LOCAL_SERVER_URI = 'http://127.0.0.1:18363/';
   public CLIENT_ID = '634807762350-ohpmnrkua0cj7nlkfkpbvlirn1dchudh.apps.googleusercontent.com';
-  public GMAIL_SCOPES = [
-    'https://www.googleapis.com/auth/userinfo.email', // email address
-    'https://www.googleapis.com/auth/userinfo.profile', // G+ profile
-    'https://mail.google.com/', // email
-    'https://www.googleapis.com/auth/contacts.readonly', // contacts
-  ];
   private CLIENT_SECRET = 'xnhTTXlur3LIIOueUXSaPKXW';
 
   constructor() {
     this.http = AppInjector.get(HttpClient);
+    this.store = AppInjector.get(Store);
   }
 
-  public addPasswordToManager(account: any) {
-    return ipcRenderer.sendSync('set-password', account.id, account.password);
+  public addPasswordToManager(account: any, password: string) {
+    ipcRenderer.sendSync('set-password', account.id, password);
   }
 
-  public deletePasswordFromManager(email: string) {
-    const hash = crypto.createHash('sha256');
-    hash.update(email);
-
-    return ipcRenderer.sendSync('delete-password', hash.digest('hex'))
-      .then(() => true)
-      .catch(err => {
-        console.error(err);
-        return false;
-      });
+  public deletePasswordFromManager(id: string) {
+    return ipcRenderer.sendSync('delete-password', id);
   }
 
-  public async constructAccountFromInfo(account: any) {
+  public getPasswordFromManager(id: string) {
+    return ipcRenderer.sendSync('get-password', id);
+  }
+
+  public async constructAccountFromInfo(account: any, firstAttempt: boolean = true) {
     const emailDomain = account.email.split('@')[1].toLowerCase(); // get the domain from the email
+    account.provider = emailDomain;
 
-    let recommendedSettings = CommonProviders[emailDomain];
-    if (recommendedSettings) {
-      if (recommendedSettings.alias) {
-        recommendedSettings = CommonProviders[recommendedSettings.alias]; // if the result is an alias get the actual result
+    // second attempt asks for connection info so don't try and get the defaults this time
+    if (firstAttempt) {
+      let recommendedSettings = CommonProviders[emailDomain];
+      if (recommendedSettings) {
+        if (recommendedSettings.alias) {
+          recommendedSettings = CommonProviders[recommendedSettings.alias]; // if the result is an alias get the actual result
+        }
+      } else {
+        recommendedSettings = {};
       }
-    } else {
-      recommendedSettings = {};
+
+      const defaultSettings = {
+        imapHost: recommendedSettings.imap_host,
+        imapPort: recommendedSettings.imap_port,
+        imapSecurity: recommendedSettings.imap_security || 'SSL / TLS',
+        smtpHost: recommendedSettings.smtp_host,
+        smtpPort: recommendedSettings.smtp_port || 587,
+        smtpSecurity: recommendedSettings.smtp_security || 'STARTTLS',
+      };
+      account.connectionSettings = Object.assign(defaultSettings, account.connectionSettings);
     }
 
-    const defaultSettings = {
-      imap_host: recommendedSettings.imap_host,
-      imap_port: recommendedSettings.imap_port,
-      imap_username: account.email,
-      imap_password: account.password,
-      imap_security: recommendedSettings.imap_security || 'SSL / TLS',
-      imap_allow_insecure_ssl: recommendedSettings.imap_allow_insecure_ssl || false,
-      smtp_host: recommendedSettings.smtp_host,
-      smtp_port: recommendedSettings.smtp_port || 587,
-      smtp_username: recommendedSettings.email,
-      smtp_password: account.password,
-      smtp_security: recommendedSettings.smtp_security || 'STARTTLS',
-      smtp_allow_insecure_ssl: recommendedSettings.smtp_allow_insecure_ssl || false
-    };
-    account.settings = Object.assign(defaultSettings, account.settings);
+    const hash = crypto.createHash('sha256');
+    hash.update(account.email);
+    account.id = hash.digest('hex');
+
+    return account;
+  }
+
+  public async constructOtherAccount(info: any, firstAttempt: boolean) {
+    const password = info.password;
+    delete info.password;
+
+    console.log(info);
+
+    const account = await this.constructAccountFromInfo(info, firstAttempt);
+
+    console.log(account);
+
+    if (account.settings && !account.settings.imap_host) {
+      return false;
+    }
+
+    await this.addPasswordToManager(account, password);
+    await this.store.dispatch(new AddAccountPending(account));
+
     return account;
   }
 
@@ -73,7 +90,7 @@ export class AccountHandler {
     const body = [];
     body.push('code=' + encodeURIComponent(code));
     body.push('client_id=' + encodeURIComponent(this.CLIENT_ID));
-    body.push('redirect_uri=' + encodeURIComponent(this.LOCAL_SERVER_HOST + ':' + this.LOCAL_SERVER_PORT));
+    body.push('redirect_uri=' + encodeURIComponent(this.LOCAL_SERVER_URI));
     body.push('client_secret=' + encodeURIComponent(this.CLIENT_SECRET));
     body.push('grant_type=' + encodeURIComponent('authorization_code'));
 
@@ -101,21 +118,13 @@ export class AccountHandler {
       return false;
     }
 
-    const hash = crypto.createHash('sha256');
-    hash.update(data.email);
-    const id = hash.digest('hex');
-
     const account = await this.constructAccountFromInfo({
-      id: id,
       name: data.name,
-      email: data.email,
-      provider: 'gmail',
-      client_id: this.CLIENT_ID,
-      refresh_token: refresh_token,
-      password: access_token
+      email: data.email
     });
 
-    await this.addPasswordToManager(account);
+    await this.addPasswordToManager(account, refresh_token);
+    this.store.dispatch(new AddAccountPending(account));
     return true;
   }
 
