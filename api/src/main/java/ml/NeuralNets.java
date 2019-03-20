@@ -3,8 +3,6 @@ package ml;
 import org.encog.ConsoleStatusReportable;
 import org.encog.EncogError;
 import org.encog.ml.MLClassification;
-import org.encog.ml.data.MLDataPair;
-import org.encog.ml.data.versatile.NormalizationHelper;
 import org.encog.ml.data.versatile.VersatileMLDataSet;
 import org.encog.ml.data.versatile.columns.ColumnDefinition;
 import org.encog.ml.data.versatile.columns.ColumnType;
@@ -24,14 +22,13 @@ class NeuralNets {
 
     }
 
-    static MLClassification trainNeuralNetwork(EncogModel model, VersatileMLDataSet data) {
-        model.holdBackValidation(0.3, true, 1001);
-        return (MLClassification) model.crossvalidate(5, true);
+    static MLClassification trainNeuralNetwork(EncogModel model) {
+        model.holdBackValidation(0, false, 1001);
+        return (MLClassification) model.crossvalidate(3, false);
     }
-    
+
     static VersatileMLDataSet processData() {
-        File source = getSource();
-        VersatileDataSource dataSource = new CSVDataSource(source, true, CSVFormat.DECIMAL_POINT);
+        VersatileDataSource dataSource = getData("TRAINING");
         VersatileMLDataSet data = new VersatileMLDataSet(dataSource);
 
         data.defineSourceColumn("numAttachments", ColumnType.continuous);
@@ -70,15 +67,20 @@ class NeuralNets {
         EncogModel model = new EncogModel(data);
         model.selectMethod(data, modelType, architecture, MLTrainFactory.TYPE_RPROP, "");
         model.selectTrainingType(data);
-        model.setReport(new ConsoleStatusReportable());
-
         data.normalize();
 
         return model;
     }
 
-    private static File getSource() {
-        final URL csv = Runner.class.getClassLoader().getResource("output_original.csv");
+    static CSVDataSource getData(String type) {
+        String filename;
+        if (type.equals("TRAINING")) {
+            filename = "training.csv";
+        } else {
+            filename = "test.csv";
+        }
+
+        final URL csv = Runner.class.getClassLoader().getResource(filename);
         File source;
 
         try {
@@ -87,7 +89,7 @@ class NeuralNets {
             throw new EncogError("Source file is missing");
         }
 
-        return source;
+        return new CSVDataSource(source, true, CSVFormat.DECIMAL_POINT);
     }
 
 }

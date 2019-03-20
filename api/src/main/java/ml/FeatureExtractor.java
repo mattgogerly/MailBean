@@ -1,20 +1,15 @@
 package ml;
 
-import com.sun.mail.util.QPDecoderStream;
 import org.apache.commons.lang.StringUtils;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
+import utils.MessageContentUtils;
 
 import javax.mail.*;
-import javax.mail.internet.ContentType;
 import javax.mail.internet.InternetAddress;
 import javax.mail.internet.MimeBodyPart;
-import javax.mail.internet.MimeMultipart;
-import java.io.BufferedInputStream;
-import java.io.ByteArrayOutputStream;
-import java.io.IOException;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.nio.charset.Charset;
@@ -55,7 +50,7 @@ class FeatureExtractor {
     void extractFeatures() {
         try {
             // extract the body once to avoid repetition
-            this.emailBody = getMessageContent();
+            this.emailBody = MessageContentUtils.getMessageContent(this.msg);
         } catch (Exception e) {
             this.emailBody = "";
         }
@@ -605,87 +600,6 @@ class FeatureExtractor {
         }
 
         return count;
-    }
-
-    /**
-     * Utility method to get the body of a message
-     * @return String body of the message
-     * @throws IOException when file is not found/other file errors
-     * @throws MessagingException when body of message is invalid
-     */
-    // adapted from https://stackoverflow.com/a/36932127
-    private String getMessageContent() throws IOException, MessagingException {
-        String result = "";
-
-        if (this.msg.isMimeType("text/plain") || this.msg.isMimeType("text/html")) {
-            result = this.msg.getContent().toString();
-        } else if (this.msg.isMimeType("multipart/*")) {
-            MimeMultipart multipart = (MimeMultipart) this.msg.getContent();
-            result = extractFromMultipart(multipart);
-        }
-
-        return result;
-    }
-
-    /**
-     * Utility method to get the body of a multipart message
-     * @param multipart the part we are extracting from
-     * @return String of multipart section of body
-     * @throws IOException when file is not found/other file errors
-     * @throws MessagingException when body of message is invalid
-     */
-    // adapted from https://stackoverflow.com/a/36932127
-    private String extractFromMultipart(MimeMultipart multipart) throws IOException, MessagingException {
-        int parts = multipart.getCount();
-
-        if (parts == 0) {
-            throw new MessagingException("Multipart must have constituent parts.");
-        }
-
-        boolean alternative = new ContentType(multipart.getContentType()).toString().contains("multipart/alternative");
-        if (alternative) {
-            return extractFromPart(multipart.getBodyPart(parts - 1));
-        }
-
-        StringBuilder result = new StringBuilder(); // use a StringBuilder to prevent recreating the String repeatedly
-        for (int i = 0; i < parts; i++) {
-            BodyPart part = multipart.getBodyPart(i);
-            result.append(extractFromPart(part));
-        }
-
-        return result.toString();
-    }
-
-    /**
-     * Utility method to get the body of a multipart message
-     * @param part the part we are extracting from
-     * @return String of multipart section of body
-     * @throws IOException when file is not found/other file errors
-     * @throws MessagingException when body of message is invalid
-     */
-    // adapted from https://stackoverflow.com/a/36932127
-    private String extractFromPart(BodyPart part) throws IOException, MessagingException {
-        String result;
-
-        if (part.getContent() instanceof MimeMultipart) {
-            result = extractFromMultipart((MimeMultipart) part.getContent());
-        } else if (part.getContent() instanceof QPDecoderStream) {
-            BufferedInputStream i = new BufferedInputStream((QPDecoderStream) part.getContent());
-            ByteArrayOutputStream o = new ByteArrayOutputStream();
-
-            while (true) {
-                int c = i.read();
-                if (c == -1) { break; }
-                o.write(c);
-            }
-
-            i.close();
-            result = new String(o.toByteArray());
-        } else {
-            result = part.getContent().toString();
-        }
-
-        return result;
     }
 
 }

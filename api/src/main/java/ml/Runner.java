@@ -1,9 +1,7 @@
 package ml;
 
 import org.encog.Encog;
-import org.encog.ml.MLClassification;
 import org.encog.ml.data.MLDataPair;
-import org.encog.ml.data.MLDataSet;
 import org.encog.ml.data.versatile.NormalizationHelper;
 import org.encog.ml.data.versatile.VersatileMLDataSet;
 import org.encog.ml.factory.MLMethodFactory;
@@ -30,7 +28,21 @@ public class Runner {
     public static void main(String[] args) {
         logger = LoggerFactory.getLogger(Runner.class);
         //extractFeatures();
-        runML();
+
+        runML("?:B->SIGMOID->12:B->SIGMOID->?");
+        runML("?:B->SIGMOID->24:B->SIGMOID->?");
+        runML("?:B->SIGMOID->36:B->SIGMOID->?");
+        runML("?:B->SIGMOID->40:B->SIGMOID->?");
+        runML("?:B->SIGMOID->44:B->SIGMOID->?");
+        runML("?:B->SIGMOID->48:B->SIGMOID->?");
+        runML("?:B->SIGMOID->60:B->SIGMOID->?");
+        runML("?->SIGMOID->12->SIGMOID->?");
+        runML("?->SIGMOID->24->SIGMOID->?");
+        runML("?->SIGMOID->36->SIGMOID->?");
+        runML("?->SIGMOID->40->SIGMOID->?");
+        runML("?->SIGMOID->44->SIGMOID->?");
+        runML("?->SIGMOID->48->SIGMOID->?");
+        runML("?->SIGMOID->60->SIGMOID->?");
     }
 
     /**
@@ -57,34 +69,55 @@ public class Runner {
         }
     }
 
-    private static void runML() {
+    private static void runML(String architecture) {
         VersatileMLDataSet data = NeuralNets.processData();
-        EncogModel model = NeuralNets.prepareModel(data, MLMethodFactory.TYPE_FEEDFORWARD,
-                "?:B->SIGMOID->36:B->SIGMOID->?");
-
-        BasicNetwork classifier = (BasicNetwork) NeuralNets.trainNeuralNetwork(model, data);
+        EncogModel model = NeuralNets.prepareModel(data, MLMethodFactory.TYPE_FEEDFORWARD, architecture);
         NormalizationHelper helper = data.getNormHelper();
 
-        printResults("Feedforward", classifier, helper, model.getValidationDataset());
+        TrainResults results = new TrainResults();
+        int runs = 0;
+        for (; runs < 5; runs++) {
+            BasicNetwork classifier = (BasicNetwork) NeuralNets.trainNeuralNetwork(model);
+            calculateMetrics(classifier, helper, results);
+        }
 
+        results.setError(results.getError() / runs);
+        results.setAccuracy(results.getAccuracy() / runs);
+        results.setPrecision(results.getPrecision() / runs);
+        results.setRecall(results.getRecall() / runs);
+        results.setF1(results.getF1() / runs);
+        results.setFpr(results.getFpr() / runs);
+        results.setFnr(results.getFnr() / runs);
+
+        printResults(architecture, results);
         Encog.getInstance().shutdown();
     }
 
-    private static void printResults(String type, BasicNetwork classifier, NormalizationHelper helper,
-                                     MLDataSet validationSet) {
+    private static void calculateMetrics(BasicNetwork classifier, NormalizationHelper helper, TrainResults avgResults) {
         double total = 0;
         double correct = 0;
-        double falseNegative = 0;
+        double truePositive = 0;
         double falsePositive = 0;
+        double falseNegative = 0;
 
-        for (MLDataPair p : validationSet) {
+        VersatileMLDataSet testSet = new VersatileMLDataSet(NeuralNets.getData("TEST"));
+        testSet.setNormHelper(helper);
+        testSet.analyze();
+        testSet.normalize();
+
+        for (MLDataPair p : testSet) {
             String expected = helper.denormalizeOutputVectorToString(p.getIdeal())[0];
 
             int predicted = classifier.classify(p.getInput());
             String predictedClass = helper.getOutputColumns().get(0).getClasses().get(predicted);
 
-            if (expected.equals(predictedClass))
+            if (expected.equals(predictedClass) && predictedClass.equals("phishing")) {
+                truePositive++;
                 correct++;
+            } else if (expected.equals(predictedClass) && predictedClass.equals("non-phishing")) {
+                correct++;
+            }
+
 
             if (expected.equals("phishing") && predictedClass.equals("non-phishing"))
                 falseNegative++;
@@ -95,15 +128,30 @@ public class Runner {
             total++;
         }
 
+        double precision = truePositive / (truePositive + falsePositive);
+        double recall = truePositive / (truePositive + falseNegative);
+
+        avgResults.setError(avgResults.getError() + ((total - correct) / total));
+        avgResults.setAccuracy(avgResults.getAccuracy() + (correct / total));
+        avgResults.setPrecision(avgResults.getPrecision() + precision);
+        avgResults.setRecall(avgResults.getRecall() + recall);
+        avgResults.setF1(avgResults.getF1() + (2 / ((1 / precision) + (1 / recall))));
+        avgResults.setFpr(avgResults.getFpr() + (falsePositive / total));
+        avgResults.setFnr(avgResults.getFnr() + (falseNegative / total));
+    }
+
+    private static void printResults(String architecture, TrainResults r) {
         System.out.println();
-        System.out.println("---------------------------------------------");
-        System.out.println(type + " with structure " + classifier.getFactoryArchitecture());
-        System.out.println("---------------------------------------------");
-        System.out.println(correct + " correct of " + total  + " total");
-        System.out.println("Accuracy: " + (correct / total) * 100 + "%");
-        System.out.println("Error: " + (total - correct) / total);
-        System.out.println("FP rate: " + falsePositive / total);
-        System.out.println("FN rate: " + falseNegative / total);
+        System.out.println("-----------------------------------------------");
+        System.out.println(architecture);
+        System.out.println("-----------------------------------------------");
+        System.out.println("Error: " + r.getError());
+        System.out.println("Accuracy: " + r.getAccuracy());
+        System.out.println("Precision: " + r.getPrecision());
+        System.out.println("Recall: " + r.getRecall());
+        System.out.println("F1: " + r.getF1());
+        System.out.println("FP rate: " + r.getFpr());
+        System.out.println("FN rate: " + r.getFnr());
     }
 
 }
