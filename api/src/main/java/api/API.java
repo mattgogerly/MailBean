@@ -1,18 +1,36 @@
 package api;
 
-import io.javalin.Javalin;
-import static io.javalin.apibuilder.ApiBuilder.*;
+import org.springframework.boot.SpringApplication;
+import org.springframework.boot.autoconfigure.SpringBootApplication;
+import org.springframework.context.annotation.Bean;
+import org.springframework.web.cors.CorsConfiguration;
+import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
+import org.springframework.web.filter.CorsFilter;
 
+import java.util.Arrays;
+import java.util.Collections;
+
+@SpringBootApplication
 public class API {
 
     public static void main(String[] args) {
-        Javalin app = Javalin.create()
-                .enableRouteOverview("/routes")
-                .start(7000);
+        SpringApplication.run(API.class, args);
+    }
 
-        app.routes(() -> {
-           get("/connect", ctx -> ctx.result("WIP"));
-        });
+    /**
+     * https://stackoverflow.com/a/51721298
+     * @return
+     */
+    @Bean
+    public CorsFilter corsFilter() {
+        final UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
+        final CorsConfiguration config = new CorsConfiguration();
+        config.setAllowCredentials(true);
+        config.setAllowedOrigins(Collections.singletonList("*"));
+        config.setAllowedHeaders(Arrays.asList("Origin", "Content-Type", "Accept"));
+        config.setAllowedMethods(Arrays.asList("GET", "POST", "PUT", "OPTIONS", "DELETE", "PATCH"));
+        source.registerCorsConfiguration("/**", config);
+        return new CorsFilter(source);
     }
 
 }
