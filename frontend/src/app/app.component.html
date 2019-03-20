@@ -1,1 +1,12 @@
+<div *ngIf="loading" fxLayout="column" fxLayoutAlign="center center" class="loading-container">
+  <mat-card class="loading">
+    <mat-card-title>
+      One moment
+    </mat-card-title>
+    <mat-card-content fxLayout="column" fxLayoutAlign="center center">
+      <mat-spinner [diameter]="48"></mat-spinner>
+    </mat-card-content>
+  </mat-card>
+</div>
+
 <router-outlet></router-outlet>
