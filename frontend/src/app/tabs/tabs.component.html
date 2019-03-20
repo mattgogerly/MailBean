@@ -1,0 +1,10 @@
+<div class="tabs-container">
+  <mat-tab-group mat-stretch-tabs id="tab-group" [animationDuration]="'0ms'" [selectedIndex]="selected.value"
+                 (selectedIndexChange)="selected.setValue($event)">
+    <mat-tab *ngFor="let tab of tabs" [label]="tab.name + ' (' + tab.provider + ')'">
+      <ng-template matTabContent>
+        <app-main></app-main>
+      </ng-template>
+    </mat-tab>
+  </mat-tab-group>
+</div>

@@ -1,0 +1,22 @@
+<div *ngIf="loading" fxLayout="column" fxLayoutAlign="center center" class="loading-container">
+  <mat-card class="loading">
+    <mat-card-title>
+      One moment
+    </mat-card-title>
+    <mat-card-content fxLayout="column" fxLayoutAlign="center center">
+      <mat-spinner [diameter]="48"></mat-spinner>
+    </mat-card-content>
+  </mat-card>
+</div>
+
+<div *ngIf="!loading" fxLayout="row" fxLayout.lt-sm="column" fxLayoutGap="0px" fxLayoutAlign="flex-start" class="main-container">
+  <div class="sidebar">
+    <app-sidebar></app-sidebar>
+  </div>
+  <div class="message-list">
+    <app-message-list></app-message-list>
+  </div>
+  <div class="message">
+    <app-message></app-message>
+  </div>
+</div>

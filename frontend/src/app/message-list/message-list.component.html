@@ -1,0 +1,19 @@
+<div *ngIf="messages.length > 0">
+  <mat-card *ngFor="let message of messages" (click)="selectMessage(message)" class="message-list-item">
+    <mat-card-title>
+      <h5 [style.fontWeight]="message.seen ? 'normaL' : 'bold'">{{message.sender | truncate:[50, '...']}}</h5>
+    </mat-card-title>
+    <mat-card-subtitle>
+      <h6 [style.fontWeight]="message.seen ? 'normal' : 'bold'">{{message.subject | truncate:[50, '...']}}</h6>
+    </mat-card-subtitle>
+    <mat-card-content>
+      <p>{{message.content | stripHtml | truncate:[150, '...']}}</p>
+    </mat-card-content>
+  </mat-card>
+</div>
+
+<div class="empty-folder-container" *ngIf="messages.length === 0" >
+  <span class="empty-folder">
+    Folder is empty.
+  </span>
+</div>

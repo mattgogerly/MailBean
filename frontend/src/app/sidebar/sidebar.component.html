@@ -1,0 +1,13 @@
+<h2>Folders</h2>
+<mat-divider></mat-divider>
+<mat-list class="folder-list">
+  <mat-list-item *ngFor="let folder of folders" (click)="changeFolder(folder)" [ngClass]="{'current': folder.name === currentFolder}">
+    <span [style.fontWeight]="folder.unread > 0 ? 'bold' : 'normal'">
+      {{folder.name}}
+    </span>
+    <span class="space-filler"></span>
+    <mat-chip-list *ngIf="folder.unread > 0">
+      <mat-chip><b>{{folder.unread}}</b></mat-chip>
+    </mat-chip-list>
+  </mat-list-item>
+</mat-list>
