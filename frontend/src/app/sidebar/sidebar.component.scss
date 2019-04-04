@@ -1,6 +1,7 @@
 h2 {
-  margin: 15px 0 6px 0;
+  margin: 20px 0 6px 0;
   padding-left: 8px;
+  display: inline-block;
 }
 
 .folder-list {
@@ -8,13 +9,13 @@ h2 {
   padding-top: 0 !important;
 }
 
-.folder-list .mat-list-item:hover {
-  background: rgba(0,0,0,0.08);
+.folder-list .mat-list-item:not(.current):hover {
+  background: rgba(195, 205, 189, 0.3);
   cursor: pointer;
 }
 
 .current {
-  background: rgba(0,0,0,0.2);
+  background: #c3cdbd;
 }
 
 .space-filler {
