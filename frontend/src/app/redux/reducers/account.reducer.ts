@@ -38,11 +38,12 @@ export function accountReducer(
     }
 
     case AccountActions.ActionTypes.DeleteAccountPending: {
-      return Object.assign({}, state, {pending: true, error: false});
+      const newAccounts = state.accounts.filter(account => account.id !== action.payload);
+      return Object.assign({}, state, {accounts: newAccounts, pending: true, error: false});
     }
 
     case AccountActions.ActionTypes.DeleteAccountSuccess: {
-      return Object.assign({}, state, state.accounts.filter(account => account.id !== action.payload));
+      return Object.assign({}, state, {pending: false, error: false});
     }
 
     case AccountActions.ActionTypes.DeleteAccountFailure: {

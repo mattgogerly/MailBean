@@ -1,13 +1,18 @@
 import * as MessageActions from '../actions/message.actions';
 import { unionBy } from 'lodash';
 import { Folder } from '../models/folder';
-import { DetailedMessage } from '../models/detailed-message';
 
-export const initialState = {
+export const initialState: any = {
   folders: [],
   messages: [],
   currentFolder: 'Inbox',
-  currentMessage: new DetailedMessage()
+  currentMessage: '',
+  composing: false,
+  refreshRequired: false,
+  localPending: false,
+  localError: false,
+  serverPending: false,
+  serverError: false
 };
 
 export function messageReducer(
@@ -23,8 +28,8 @@ export function messageReducer(
       return Object.assign({}, state, {
         localPending: false,
         localError: false,
-        folders: sortFolders(unionBy(action.payload.folders, state.folders, 'name')),
-        messages: unionBy(action.payload.messages, state.messages, 'uid')
+        folders: sortFolders(action.payload.folders),
+        messages: action.payload.messages
       });
     }
 
@@ -52,6 +57,66 @@ export function messageReducer(
       return Object.assign({}, state, {currentMessage: action.payload});
     }
 
+    case MessageActions.ActionTypes.ReadMessagePending: {
+      let currentMessage = null;
+      const messages = state.messages.map(m => {
+        if (m.uid === action.payload.uid) {
+          currentMessage = {...m, seen: true};
+          return currentMessage;
+        }
+
+        return m;
+      });
+
+      let folder = null;
+      const folders = state.folders.map(f => {
+        if (f.name === action.payload.folder.name) {
+          folder = {...f, unread: f.unread - 1};
+          return folder;
+        }
+
+        return f;
+      });
+
+      return Object.assign({}, state, {messages: messages, folders: folders, currentMessage: currentMessage});
+    }
+
+    case MessageActions.ActionTypes.ToggleComposing: {
+      return Object.assign({}, state, {composing: action.payload});
+    }
+
+    case MessageActions.ActionTypes.DeleteMessagePending: {
+      const index = state.messages.findIndex(m =>  {
+        if (m.uid === action.payload.uid) {
+          folder = m.folder.name;
+          return m;
+        }
+      });
+      const newMessagesArr = state.messages.filter(m => m.uid !== action.payload.uid);
+
+      const folderMessages = newMessagesArr.filter(m => m.folder.name === folder);
+      let newCurrentMessage;
+      if (folderMessages.length === 0) {
+        newCurrentMessage = {};
+      } else if (index >= folderMessages.length) {
+        newCurrentMessage = folderMessages[folderMessages.length - 1];
+      } else {
+        newCurrentMessage = folderMessages[index];
+      }
+
+      let folder = null;
+      const folders = state.folders.map(f => {
+        if (f.name === action.payload.folder.name && action.payload.seen === false) {
+          folder = {...f, unread: f.unread - 1};
+          return folder;
+        }
+
+        return f;
+      });
+
+      return Object.assign({}, state, {messages: newMessagesArr, folders: folders, currentMessage: newCurrentMessage.uid});
+    }
+
     default: {
       return state;
     }
@@ -59,7 +124,8 @@ export function messageReducer(
 }
 
 function sortFolders(folders: Folder[]) {
-  const order = [ 'sent', 'junk', 'spam', 'inbox' ];
+  const order = [ '[gmail]/bin', 'deleted', 'trash', '[gmail]/sent mail', 'sent', '[gmail]/drafts', 'drafts', 'junk',
+    '[gmail]/spam', 'spam', 'inbox', '[gmail]/all mail' ];
 
   return folders.sort(((a, b) => {
     return order.indexOf(b.name.toLowerCase()) - order.indexOf(a.name.toLowerCase());
