@@ -29,20 +29,7 @@ public class Runner {
         logger = LoggerFactory.getLogger(Runner.class);
         //extractFeatures();
 
-        runML("?:B->SIGMOID->12:B->SIGMOID->?");
-        runML("?:B->SIGMOID->24:B->SIGMOID->?");
-        runML("?:B->SIGMOID->36:B->SIGMOID->?");
-        runML("?:B->SIGMOID->40:B->SIGMOID->?");
-        runML("?:B->SIGMOID->44:B->SIGMOID->?");
-        runML("?:B->SIGMOID->48:B->SIGMOID->?");
-        runML("?:B->SIGMOID->60:B->SIGMOID->?");
-        runML("?->SIGMOID->12->SIGMOID->?");
-        runML("?->SIGMOID->24->SIGMOID->?");
-        runML("?->SIGMOID->36->SIGMOID->?");
-        runML("?->SIGMOID->40->SIGMOID->?");
-        runML("?->SIGMOID->44->SIGMOID->?");
-        runML("?->SIGMOID->48->SIGMOID->?");
-        runML("?->SIGMOID->60->SIGMOID->?");
+        runML("?:B->SIGMOID->12:B->SIGMOID->12:B->SIGMOID->?");
     }
 
     /**
@@ -97,6 +84,7 @@ public class Runner {
         double total = 0;
         double correct = 0;
         double truePositive = 0;
+        double trueNegative = 0;
         double falsePositive = 0;
         double falseNegative = 0;
 
@@ -115,6 +103,7 @@ public class Runner {
                 truePositive++;
                 correct++;
             } else if (expected.equals(predictedClass) && predictedClass.equals("non-phishing")) {
+                trueNegative++;
                 correct++;
             }
 
@@ -136,8 +125,8 @@ public class Runner {
         avgResults.setPrecision(avgResults.getPrecision() + precision);
         avgResults.setRecall(avgResults.getRecall() + recall);
         avgResults.setF1(avgResults.getF1() + (2 / ((1 / precision) + (1 / recall))));
-        avgResults.setFpr(avgResults.getFpr() + (falsePositive / total));
-        avgResults.setFnr(avgResults.getFnr() + (falseNegative / total));
+        avgResults.setFpr(avgResults.getFpr() + (falsePositive / (trueNegative + falsePositive)));
+        avgResults.setFnr(avgResults.getFnr() + (falseNegative / (falseNegative + truePositive)));
     }
 
     private static void printResults(String architecture, TrainResults r) {

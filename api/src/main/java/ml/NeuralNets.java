@@ -1,6 +1,5 @@
 package ml;
 
-import org.encog.ConsoleStatusReportable;
 import org.encog.EncogError;
 import org.encog.ml.MLClassification;
 import org.encog.ml.data.versatile.VersatileMLDataSet;
@@ -24,7 +23,7 @@ class NeuralNets {
 
     static MLClassification trainNeuralNetwork(EncogModel model) {
         model.holdBackValidation(0, false, 1001);
-        return (MLClassification) model.crossvalidate(3, false);
+        return (MLClassification) model.crossvalidate(5, false);
     }
 
     static VersatileMLDataSet processData() {
@@ -75,7 +74,7 @@ class NeuralNets {
     static CSVDataSource getData(String type) {
         String filename;
         if (type.equals("TRAINING")) {
-            filename = "training.csv";
+            filename = "train.csv";
         } else {
             filename = "test.csv";
         }

@@ -7,7 +7,6 @@ import javax.mail.*;
 import java.nio.file.Path;
 import java.util.Properties;
 
-
 /**
  * Class to read in emails from a .mbox file
  */

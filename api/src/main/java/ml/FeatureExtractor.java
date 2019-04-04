@@ -29,7 +29,7 @@ class FeatureExtractor {
 
     private Message msg; // the email message
     private String emailBody; // body of the email needs to be accessed throughout class
-    private Document body; // parsed HTML from Jsoup
+    private Document body; // parsed HTML from JSoup
 
     private Map<String, Object> values; // feature names mapped to their values
 
