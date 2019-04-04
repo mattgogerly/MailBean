@@ -1,10 +1,26 @@
+<div class="list-controls" fxLayout="row" fxLayoutAlign="center center" fxLayoutGap="10px">
+  <div fxLayout="row" fxLayoutGap="3px">
+    <button [disabled]="refreshing" mat-raised-button class="compose-button" color="primary" (click)="refresh()">
+      <i *ngIf="!refreshing" class="material-icons">refresh</i>
+      <mat-spinner *ngIf="refreshing" [diameter]="30"></mat-spinner>
+    </button>
+    <button mat-raised-button class="compose-button" color="primary" (click)="compose()">
+      <i class="material-icons">send</i>
+    </button>
+  </div>
+  <mat-form-field class="search">
+    <input matInput placeholder="Search {{currentFolder | prettyFolder | titlecase}}">
+    <span matSuffix><i class="material-icons md-18">search</i></span>
+  </mat-form-field>
+</div>
+
 <div *ngIf="messages.length > 0">
-  <mat-card *ngFor="let message of messages" (click)="selectMessage(message)" class="message-list-item">
+  <mat-card *ngFor="let message of messages" (click)="selectMessage(message)" [ngClass]="currentMessage == message ? 'message-list-item selected' : 'message-list-item'">
     <mat-card-title>
-      <h5 [style.fontWeight]="message.seen ? 'normaL' : 'bold'">{{message.sender | truncate:[50, '...']}}</h5>
+      <h5 [style.fontWeight]="message.seen ? 'normaL' : 'bold'">{{message.sender | prettyEmail | truncate:[50, '...']}}</h5>
     </mat-card-title>
     <mat-card-subtitle>
-      <h6 [style.fontWeight]="message.seen ? 'normal' : 'bold'">{{message.subject | truncate:[50, '...']}}</h6>
+      <h6 [style.fontWeight]="message.seen ? 'normal' : 'bold'">{{message.subject | truncate:[45, '...']}}</h6>
     </mat-card-subtitle>
     <mat-card-content>
       <p>{{message.content | stripHtml | truncate:[150, '...']}}</p>
