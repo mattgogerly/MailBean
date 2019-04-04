@@ -1,0 +1,43 @@
+<div class="compose">
+  <mat-form-field class="compose-field">
+    <mat-chip-list #toChips aria-label="to">
+      <mat-chip *ngFor="let recipient of to" [removable]="true" (removed)="remove(recipient, 'to')">
+        {{recipient}}
+        <i class="material-icons" matChipRemove>cancel</i>
+      </mat-chip>
+      <input placeholder="Add recipients"
+             [matChipInputFor]="toChips"
+             [matChipInputAddOnBlur]="true"
+             [matChipInputSeparatorKeyCodes]="separatorKeysCodes"
+             (matChipInputTokenEnd)="add($event, 'to')">
+    </mat-chip-list>
+  </mat-form-field>
+
+  <mat-form-field class="compose-field">
+    <mat-chip-list #ccChips aria-label="cc">
+      <mat-chip *ngFor="let recipient of cc" [removable]="true" (removed)="remove(recipient, 'cc')">
+        {{recipient}}
+        <i class="material-icons" matChipRemove>cancel</i>
+      </mat-chip>
+      <input placeholder="Add CC"
+             [matChipInputFor]="ccChips"
+             [matChipInputAddOnBlur]="true"
+             (matChipInputTokenEnd)="add($event, 'cc')">
+    </mat-chip-list>
+  </mat-form-field>
+
+  <mat-form-field class="compose-field">
+    <input matInput [(ngModel)]="subject" name="subject" placeholder="Subject">
+  </mat-form-field>
+
+  <ckeditor class="editor"
+            [editor]="editor"
+            [(ngModel)]="content">
+  </ckeditor>
+
+  <div class="button-row">
+    <button mat-raised-button (click)="reset()">Back</button>
+    <span class="space-filler"></span>
+    <button mat-raised-button color="primary" (click)="sendMessage()">Send</button>
+  </div>
+</div>

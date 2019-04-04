@@ -1,0 +1,25 @@
+.compose {
+  display: flex;
+  flex-direction: column;
+  padding: 10px;
+  height: 100%;
+}
+
+:host ::ng-deep .ck-editor__editable {
+  max-height: 64vh;
+  min-height: 20vh;
+}
+
+.compose-field {
+  width: 100%;
+}
+
+.button-row {
+  display: flex;
+  flex-direction: row;
+  margin-top: 10px;
+}
+
+.space-filler {
+  flex: 1 1 auto;
+}
