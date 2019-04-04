@@ -1,4 +1,4 @@
-const {app, BrowserWindow, ipcMain} = require('electron');
+const { app, BrowserWindow, ipcMain } = require('electron');
 const keytar = require('keytar');
 const { default: installExtension, REDUX_DEVTOOLS } = require('electron-devtools-installer');
 
