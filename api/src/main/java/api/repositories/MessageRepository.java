@@ -10,4 +10,5 @@ import java.util.List;
 public interface MessageRepository extends CrudRepository<DetailedMessage, Long> {
     List<DetailedMessage> findAllByAccount_Id(String id);
     List<DetailedMessage> findAllByFolder_Id(Integer id);
+    void deleteAllByAccount_Id(String id);
 }

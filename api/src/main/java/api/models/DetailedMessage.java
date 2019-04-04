@@ -37,10 +37,18 @@ public class DetailedMessage implements Serializable {
     private ArrayList<SerializableHeader> headers;
 
     @Column(name = "received", length = 512)
-    private String received;
+    private Long received;
 
     @Column(name = "sender", length = 1024)
     private String sender;
+
+    @Lob
+    @Basic
+    private ArrayList<String> to;
+
+    @Lob
+    @Basic
+    private ArrayList<String> cc;
 
     @Column(name = "subject", length = 1024)
     private String subject;
@@ -61,14 +69,16 @@ public class DetailedMessage implements Serializable {
     @JsonIgnoreProperties({"id", "unread", "account"})
     private DetailedFolder folder;
 
-    public DetailedMessage(Long uid, Integer messageNum, ArrayList<SerializableHeader> headers, String received,
-                           String sender, String subject, Boolean seen, Boolean phishing, String content,
-                           DetailedFolder folder) {
+    public DetailedMessage(Long uid, Integer messageNum, ArrayList<SerializableHeader> headers, Long received,
+                           String sender, ArrayList<String> to, ArrayList<String> cc, String subject, Boolean seen,
+                           Boolean phishing, String content, DetailedFolder folder) {
         this.uid = uid;
         this.messageNum = messageNum;
         this.headers = headers;
         this.received = received;
         this.sender = sender;
+        this.to = to;
+        this.cc = cc;
         this.subject = subject;
         this.seen = seen;
         this.phishing = phishing;

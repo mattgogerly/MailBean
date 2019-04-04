@@ -8,6 +8,7 @@ import com.google.api.client.http.javanet.NetHttpTransport;
 import com.google.api.client.json.jackson2.JacksonFactory;
 import org.springframework.stereotype.Service;
 
+import javax.mail.Session;
 import javax.mail.Store;
 import java.io.IOException;
 import java.util.HashMap;
@@ -18,10 +19,12 @@ public class AccountAuthService {
 
     private Map<String, String> authStorage;
     private Map<String, Store> storeStorage;
+    private Map<String, Session> sessionStorage;
 
     public AccountAuthService() {
         authStorage = new HashMap<>();
         storeStorage = new HashMap<>();
+        sessionStorage = new HashMap<>();
     }
 
     public void addAccount(String key, String password) {
@@ -30,6 +33,8 @@ public class AccountAuthService {
 
     public void deleteAccount(String key) {
         authStorage.remove(key);
+        storeStorage.remove(key);
+        sessionStorage.remove(key);
     }
 
     String getPassword(String key) {
@@ -40,12 +45,16 @@ public class AccountAuthService {
         storeStorage.put(accountId, store);
     }
 
-    void deleteStore(String accountId) {
-        storeStorage.remove(accountId);
-    }
-
     Store getStore(String accountId) {
         return storeStorage.get(accountId);
+    }
+
+    void addSession(String accountId, Session session) {
+        sessionStorage.put(accountId, session);
+    }
+
+    Session getSession(String accountId) {
+        return sessionStorage.get(accountId);
     }
 
     String refreshOAuth(String refreshToken) {
