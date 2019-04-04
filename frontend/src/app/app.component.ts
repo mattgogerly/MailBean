@@ -8,7 +8,7 @@ import { Router } from '@angular/router';
 @Component({
   selector: 'app-root',
   templateUrl: './app.component.html',
-  styleUrls: ['./app.component.css']
+  styleUrls: ['./app.component.scss']
 })
 export class AppComponent implements OnInit {
 
@@ -22,7 +22,11 @@ export class AppComponent implements OnInit {
 
   ngOnInit(): void {
     this.accountsInfo$.subscribe(accountsInfo => {
-      if (accountsInfo.pending !== true && accountsInfo.accounts.length > 0) {
+      const composing = this.router.url.includes('compose');
+
+      if (composing) {
+        this.loading = false;
+      } else if (accountsInfo.pending !== true && accountsInfo.accounts.length > 0) {
         this.loading = false;
         this.router.navigate(['main']);
       } else if (accountsInfo.pending !== true) {
