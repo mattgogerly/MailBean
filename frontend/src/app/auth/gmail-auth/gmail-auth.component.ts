@@ -1,4 +1,4 @@
-import { ChangeDetectorRef, Component, OnDestroy, OnInit } from '@angular/core';
+import { Component, OnDestroy, OnInit } from '@angular/core';
 import { shell } from 'electron';
 import { AccountHandler } from '../utils/AccountHandler';
 import * as url from 'url';
@@ -7,7 +7,7 @@ import * as http from 'http';
 @Component({
   selector: 'app-gmail-auth',
   templateUrl: './gmail-auth.component.html',
-  styleUrls: ['./gmail-auth.component.css']
+  styleUrls: ['./gmail-auth.component.scss']
 })
 export class GmailAuthComponent implements OnInit, OnDestroy {
 
@@ -23,7 +23,7 @@ export class GmailAuthComponent implements OnInit, OnDestroy {
   ];
   authStatus = 'pending';
 
-  constructor(private changeDetectorRef: ChangeDetectorRef) {
+  constructor() {
     this.AccountHandler = new AccountHandler();
   }
 

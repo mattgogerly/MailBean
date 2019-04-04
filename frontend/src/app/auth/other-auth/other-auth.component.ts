@@ -5,7 +5,7 @@ import { Router } from '@angular/router';
 @Component({
   selector: 'app-other-auth',
   templateUrl: './other-auth.component.html',
-  styleUrls: ['./other-auth.component.css']
+  styleUrls: ['./other-auth.component.scss']
 })
 export class OtherAuthComponent implements OnInit {
 
