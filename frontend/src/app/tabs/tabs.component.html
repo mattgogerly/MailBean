@@ -1,10 +1,24 @@
 <div class="tabs-container">
-  <mat-tab-group mat-stretch-tabs id="tab-group" [animationDuration]="'0ms'" [selectedIndex]="selected.value"
-                 (selectedIndexChange)="selected.setValue($event)">
-    <mat-tab *ngFor="let tab of tabs" [label]="tab.name + ' (' + tab.provider + ')'">
+  <mat-tab-group mat-stretch-tabs *ngIf="tabs.length > 1" id="tab-group"
+                 [animationDuration]="'0ms'"
+                 [selectedIndex]="selected.value"
+                 (selectedIndexChange)="changeTab($event)">
+
+    <mat-tab *ngFor="let tab of tabs; let index = index">
+      <ng-template mat-tab-label class="tab-label-container">
+        <span>{{tab.name + ' (' + tab.provider + ')'}}</span>
+        <button *ngIf="tab.name !== 'Add Account'"
+                mat-button
+                color="warn"
+                class="close-button"
+                (click)="closeTab(index)">
+          <i class="material-icons md-16">close</i>
+        </button>
+      </ng-template>
       <ng-template matTabContent>
         <app-main></app-main>
       </ng-template>
     </mat-tab>
+
   </mat-tab-group>
 </div>
