@@ -1,3 +1,43 @@
-<div class="message" #message>
+<div class="compose-container" *ngIf="composing">
+  <app-compose [to]="replyTo"
+               [cc]="replyCc"
+               [subject]="replySubject"
+               [content]="replyContent"
+               [reply]="reply"
+               [replyAll]="replyAll"
+               [replyTo]="message.uid">
+  </app-compose>
+</div>
 
+<div class="message-container" *ngIf="display && !composing">
+  <div class="controls" fxLayout="column">
+    <div class="control-row">
+      <h4><b>{{message?.subject}}</b></h4>
+    </div>
+    <div class="control-row">
+      <span><b>To:</b> {{to}}</span>
+    </div>
+    <div class="control-row" *ngIf="cc.length > 0">
+      <span><b>CC:</b> {{cc}}</span>
+    </div>
+    <div class="control-row">
+      <span><b>From:</b> {{from}}</span>
+    </div>
+    <div class="control-row">
+      <span><b>Received:</b> {{message?.received | date: 'EEEE d MMMM yyyy, HH:ss'}}</span>
+      <span class="spacer"></span>
+      <span>
+        <i matTooltip="Reply" [matTooltipPosition]="'above'" class="material-icons md-30 message-control" (click)="openComposer('reply')">reply</i>
+        <i matTooltip="Reply all" [matTooltipPosition]="'above'" class="material-icons md-30 message-control" (click)="openComposer('reply')">reply_all</i>
+        <i matTooltip="Forward" [matTooltipPosition]="'above'" class="material-icons md-30 message-control" (click)="openComposer('forward')">forward</i>
+        <i matTooltip="Delete" [matTooltipPosition]="'above'" class="material-icons md-30 message-control" (click)="deleteMessage()">delete</i>
+      </span>
+    </div>
+  </div>
+
+  <div class="alert alert-danger" role="alert" *ngIf="message.phishing">
+    <b>Danger!</b> This message was automatically flagged as phishing or spam. Be careful!
+  </div>
+
+  <webview class="message" [attr.src]="'data:text/html,' + message.content"></webview>
 </div>
