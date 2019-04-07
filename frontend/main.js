@@ -42,9 +42,10 @@ app.on('activate', () => {
 });
 
 ipcMain.on('get-password', (event, id) => {
-  keytar.getPassword('MailBean', id).then( result => {
-    event.returnValue = result;
-  });
+  keytar.getPassword('MailBean', id)
+    .then(result => {
+      event.returnValue = result;
+    });
 });
 
 ipcMain.on('set-password', (event, id, pass) => {

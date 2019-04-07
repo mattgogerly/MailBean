@@ -21,15 +21,15 @@ export class AccountHandler {
     this.store = AppInjector.get(Store);
   }
 
-  public addPasswordToManager(account: any, password: string) {
+  public static addPasswordToManager(account: any, password: string) {
     ipcRenderer.sendSync('set-password', account.id, password);
   }
 
-  public deletePasswordFromManager(id: string) {
+  public static deletePasswordFromManager(id: string) {
     return ipcRenderer.sendSync('delete-password', id);
   }
 
-  public getPasswordFromManager(id: string) {
+  public static getPasswordFromManager(id: string) {
     return ipcRenderer.sendSync('get-password', id);
   }
 
@@ -70,17 +70,12 @@ export class AccountHandler {
     const password = info.password;
     delete info.password;
 
-    console.log(info);
-
     const account = await this.constructAccountFromInfo(info, firstAttempt);
-
-    console.log(account);
-
     if (account.settings && !account.settings.imap_host) {
       return false;
     }
 
-    await this.addPasswordToManager(account, password);
+    await AccountHandler.addPasswordToManager(account, password);
     await this.store.dispatch(new AddAccountPending(account));
 
     return account;
@@ -105,7 +100,7 @@ export class AccountHandler {
     if (json.error) {
       return false;
     }
-    const { access_token, refresh_token, ...other } = json;
+    const { access_token, refresh_token } = json;
 
     const optionsTwo = {
       headers: new HttpHeaders({'Authorization': 'Bearer' + access_token})
@@ -123,7 +118,7 @@ export class AccountHandler {
       email: data.email
     });
 
-    await this.addPasswordToManager(account, refresh_token);
+    await AccountHandler.addPasswordToManager(account, refresh_token);
     this.store.dispatch(new AddAccountPending(account));
     return true;
   }

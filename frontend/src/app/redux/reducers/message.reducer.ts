@@ -86,6 +86,7 @@ export function messageReducer(
     }
 
     case MessageActions.ActionTypes.DeleteMessagePending: {
+      let folder;
       const index = state.messages.findIndex(m =>  {
         if (m.uid === action.payload.uid) {
           folder = m.folder.name;
@@ -104,7 +105,6 @@ export function messageReducer(
         newCurrentMessage = folderMessages[index];
       }
 
-      let folder = null;
       const folders = state.folders.map(f => {
         if (f.name === action.payload.folder.name && action.payload.seen === false) {
           folder = {...f, unread: f.unread - 1};
