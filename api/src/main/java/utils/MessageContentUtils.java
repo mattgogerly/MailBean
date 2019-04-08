@@ -1,6 +1,9 @@
 package utils;
 
+import com.sun.mail.util.BASE64DecoderStream;
 import com.sun.mail.util.QPDecoderStream;
+import org.apache.commons.io.IOUtils;
+import org.apache.commons.net.util.Base64;
 
 import javax.mail.BodyPart;
 import javax.mail.Message;
@@ -50,7 +53,7 @@ public final class MessageContentUtils {
             throw new MessagingException("Multipart must have constituent parts.");
         }
 
-        boolean alternative = new ContentType(multipart.getContentType()).toString().contains("multipart/alternative");
+        boolean alternative = new ContentType(multipart.getContentType()).match("multipart/alternative");
         if (alternative) {
             return extractFromPart(multipart.getBodyPart(parts - 1));
         }
@@ -83,12 +86,22 @@ public final class MessageContentUtils {
 
             while (true) {
                 int c = i.read();
-                if (c == -1) { break; }
+                if (c == -1) {
+                    break;
+                }
                 o.write(c);
             }
 
             i.close();
             result = new String(o.toByteArray());
+        } else if (part.getContent() instanceof BASE64DecoderStream) {
+            // image in Base 64
+            BASE64DecoderStream base64DecoderStream = (BASE64DecoderStream) part.getContent();
+            byte[] byteArray = IOUtils.toByteArray(base64DecoderStream);
+            byte[] encodeBase64 = Base64.encodeBase64(byteArray);
+            result = new String(encodeBase64, "UTF-8");
+
+            return "<img src=\"data:image/jpg;base64, " + result + "\">";
         } else {
             result = part.getContent().toString();
         }
