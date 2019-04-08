@@ -39,10 +39,7 @@ export class GmailAuthComponent implements OnInit, OnDestroy {
       }
     };
 
-    this.server = http.createServer(responseHandler)
-      .listen(this.LOCAL_SERVER_PORT, () => {
-        console.log('Running...');
-    });
+    this.server = http.createServer(responseHandler).listen(this.LOCAL_SERVER_PORT);
     shell.openExternal(this.buildAuthURL());
   }
 

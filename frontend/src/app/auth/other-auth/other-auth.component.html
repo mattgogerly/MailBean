@@ -11,14 +11,14 @@
     </mat-card-content>
   </mat-card>
 
-  <mat-card class="other-card" fxLayout="column" *ngIf="authStatus === 'pending'">
+  <mat-card class="other-card" fxLayout="column" *ngIf="authStatus === 'pending' && step === 1">
     <mat-card-title>
-      Add an IMAP account
+      Add an email account
     </mat-card-title>
     <mat-card-subtitle>
       Enter your account credentials below. We'll try and determine any other settings automatically.
     </mat-card-subtitle>
-    <mat-card-content *ngIf="step === 1">
+    <mat-card-content>
       <form #basicDetails="ngForm" (ngSubmit)="submit()" class="basic-details-form" fxLayout="column">
         <mat-form-field>
           <input matInput placeholder="Name" [(ngModel)]="name" name="name" required>
@@ -38,10 +38,53 @@
         </div>
       </form>
     </mat-card-content>
+  </mat-card>
 
-    <mat-card-content *ngIf="step === 2">
+  <mat-card class="other-card" fxLayout="column" *ngIf="authStatus === 'pending' && step === 2">
+    <mat-card-title>
+      Add an email account
+    </mat-card-title>
+    <mat-card-subtitle>
+      We couldn't automatically determine your connection settings. Please enter them below.
+    </mat-card-subtitle>
+    <mat-card-content>
       <form #basicDetails="ngForm" (ngSubmit)="submitStepTwo()" class="basic-details-form" fxLayout="column">
+        <mat-form-field>
+          <input matInput placeholder="IMAP Host" [(ngModel)]="imapHost" name="imapHost" required>
+        </mat-form-field>
 
+        <mat-form-field>
+          <input matInput placeholder="IMAP Port" [(ngModel)]="imapPort" name="imapHost" required>
+        </mat-form-field>
+
+        <mat-form-field>
+          <mat-label>IMAP Security</mat-label>
+          <mat-select [(value)]="imapSecurity">
+            <mat-option value="SSL/TLS">SSL/TLS</mat-option>
+            <mat-option value="">None</mat-option>
+          </mat-select>
+        </mat-form-field>
+
+        <mat-form-field>
+          <input matInput placeholder="SMTP Host" [(ngModel)]="smtpHost" name="imapHost" required>
+        </mat-form-field>
+
+        <mat-form-field>
+          <input matInput placeholder="SMTP Port" [(ngModel)]="smtpPort" name="imapHost" required>
+        </mat-form-field>
+
+        <mat-form-field>
+          <mat-label>SMTP Security</mat-label>
+          <mat-select [(value)]="smtpSecurity">
+            <mat-option value="STARTTLS">STARTTLS</mat-option>
+            <mat-option value="">None</mat-option>
+          </mat-select>
+        </mat-form-field>
+
+        <div class="basic-button-container" fxLayout="row" fxLayoutGap="10px">
+          <button type="button" [routerLink]="'/auth'" mat-stroked-button>Go back</button>
+          <button type="submit" [disabled]="!basicDetails.form.valid" mat-raised-button [color]="'primary'">Next</button>
+        </div>
       </form>
     </mat-card-content>
   </mat-card>

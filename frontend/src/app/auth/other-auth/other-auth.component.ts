@@ -39,7 +39,11 @@ export class OtherAuthComponent implements OnInit {
     }, true);
 
     if (account !== false) {
-      this.router.navigate(['/auth/success']);
+      this.authStatus = 'complete';
+
+      setTimeout(() => {
+        this.router.navigate(['/main']);
+      }, 2000);
     } else {
       this.step = 2;
     }
@@ -61,7 +65,11 @@ export class OtherAuthComponent implements OnInit {
     }, false);
 
     if (account !== false) {
-      this.router.navigate(['/auth/success']);
+      this.authStatus = 'complete';
+
+      setTimeout(() => {
+        this.router.navigate(['/main']);
+      }, 2000);
     } else {
       this.router.navigate(['/auth/failure']);
     }
