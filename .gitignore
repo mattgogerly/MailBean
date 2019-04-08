@@ -17,3 +17,7 @@ api/dataset/phishing/.DS_Store
 *.launch
 .settings/
 *.sublime-workspace
+*.iml
+
+# MailBean
+*.db
