@@ -41,35 +41,8 @@
 
     <mat-card-content *ngIf="step === 2">
       <form #basicDetails="ngForm" (ngSubmit)="submitStepTwo()" class="basic-details-form" fxLayout="column">
-        <mat-form-field>
-          <input matInput placeholder="Name" [(ngModel)]="name" name="name" required>
-        </mat-form-field>
 
-        <mat-form-field>
-          <input type="email" matInput placeholder="Email" [(ngModel)]="email" name="email" [email]="true" required>
-        </mat-form-field>
-
-        <mat-form-field>
-          <input type="password" matInput placeholder="Password" [(ngModel)]="password" name="password" required>
-        </mat-form-field>
-
-        <div class="basic-button-container" fxLayout="row" fxLayoutGap="10px">
-          <button type="button" [routerLink]="'/auth'" mat-stroked-button>Go back</button>
-          <button type="submit" [disabled]="!basicDetails.form.valid" mat-raised-button [color]="'primary'">Next</button>
-        </div>
       </form>
-    </mat-card-content>
-  </mat-card>
-
-  <mat-card class="gmail-card" fxLayout="column" *ngIf="authStatus === 'error'">
-    <mat-card-title>
-      Error
-    </mat-card-title>
-    <mat-card-subtitle>
-      We were unable to connect to your account.
-    </mat-card-subtitle>
-    <mat-card-content>
-      <button mat-stroked-button>Go back</button>
     </mat-card-content>
   </mat-card>
 </div>

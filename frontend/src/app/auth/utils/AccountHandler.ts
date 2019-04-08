@@ -71,7 +71,7 @@ export class AccountHandler {
     delete info.password;
 
     const account = await this.constructAccountFromInfo(info, firstAttempt);
-    if (account.settings && !account.settings.imap_host) {
+    if (account.connectionSettings.imapHost === undefined) {
       return false;
     }
 

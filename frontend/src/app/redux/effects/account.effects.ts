@@ -2,20 +2,19 @@ import { Injectable } from '@angular/core';
 import { Actions, Effect, ofType } from '@ngrx/effects';
 import { AccountService } from '../services/account.service';
 import * as AccountActions from '../actions/account.actions';
-import * as MessageActions from '../actions/message.actions';
-import { switchMap, map, catchError, withLatestFrom, delay } from 'rxjs/operators';
-import { EMPTY, Observable, of } from 'rxjs';
-import { Action, Store } from '@ngrx/store';
+import { switchMap, map, catchError } from 'rxjs/operators';
+import { Observable, of } from 'rxjs';
+import { Action } from '@ngrx/store';
 import {
   AddAccountPending, AddAccountSuccess,
   DeleteAccountPending,
   GetAccountsSuccess,
-  SetCurrentAccountPending, SetCurrentAccountSuccess
+  SetCurrentAccountPending
 } from '../actions/account.actions';
 
 @Injectable()
 export class AccountEffects {
-  constructor(private actions$: Actions, private accountService: AccountService,  private store: Store<any>) {}
+  constructor(private actions$: Actions, private accountService: AccountService) {}
 
   @Effect()
   getAccounts$: Observable<Action> = this.actions$.pipe(

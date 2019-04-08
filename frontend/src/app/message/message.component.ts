@@ -15,8 +15,6 @@ export class MessageComponent implements OnInit {
   from: string;
   to: string[] = [];
   cc: string[] = [];
-  subject = '';
-  content = '';
   display = false;
   originatedHere = false;
 
@@ -33,16 +31,20 @@ export class MessageComponent implements OnInit {
   ngOnInit() {
     this.store.pipe(select((state: any) => state.messages))
       .subscribe(messageState => {
+        if (messageState.messages.length > 0) {
           this.message = messageState.messages.find(m => m.uid === messageState.currentMessage);
+        } else {
+          this.message = undefined;
+        }
 
-          if (this.message !== undefined) {
-            this.from = WebAddressToEmailPipe.prototype.transform(this.message.sender);
-            this.to = this.message.to.map(m => WebAddressToEmailPipe.prototype.transform(m));
-            this.cc = this.message.cc.map(m => WebAddressToEmailPipe.prototype.transform(m));
-            this.display = true;
-          } else {
-            this.display = false;
-          }
+        if (this.message !== undefined) {
+          this.from = WebAddressToEmailPipe.prototype.transform(this.message.sender);
+          this.to = this.message.to.map(m => WebAddressToEmailPipe.prototype.transform(m));
+          this.cc = this.message.cc.map(m => WebAddressToEmailPipe.prototype.transform(m));
+          this.display = true;
+        } else {
+          this.display = false;
+        }
       });
 
     this.store.pipe(select((state: any) => state.messages.composing))

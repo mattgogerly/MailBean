@@ -24,7 +24,7 @@ export class AccountService {
   }
 
   setCurrentAccount(id: string) {
-    const password = new AccountHandler().getPasswordFromManager(id);
+    const password = AccountHandler.getPasswordFromManager(id);
     const body = {password: password};
     return this.httpClient.post(environment.localApi + '/accounts/' + id, body);
   }
