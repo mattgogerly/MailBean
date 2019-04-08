@@ -25,7 +25,7 @@ import java.util.regex.Pattern;
  * Class to facilitate the extraction of features from an email in order to produce an input for the Machine Learning
  * models.
  */
-class FeatureExtractor {
+public class FeatureExtractor {
 
     private Message msg; // the email message
     private String emailBody; // body of the email needs to be accessed throughout class
@@ -37,7 +37,7 @@ class FeatureExtractor {
      * Constructor for the FeatureSelector class
      * @param msg The email message we're extracting features for
      */
-    FeatureExtractor(Message msg) {
+    public FeatureExtractor(Message msg) {
         this.msg = msg;
 
         // LinkedHashMap since we want to preserve ordering for writing later (all rows have same order)
@@ -47,7 +47,7 @@ class FeatureExtractor {
     /**
      * Method to run feature extraction
      */
-    void extractFeatures() {
+    public void extractFeatures() {
         try {
             // extract the body once to avoid repetition
             this.emailBody = MessageContentUtils.getMessageContent(this.msg);
@@ -89,7 +89,7 @@ class FeatureExtractor {
     /**
      * @return The Map of String -> Object representing the features extracted from the email
      */
-    Map<String, Object> getValues() {
+    public Map<String, Object> getValues() {
         return this.values;
     }
 

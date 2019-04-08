@@ -7,11 +7,13 @@ import org.encog.ml.data.versatile.VersatileMLDataSet;
 import org.encog.ml.factory.MLMethodFactory;
 import org.encog.ml.model.EncogModel;
 import org.encog.neural.networks.BasicNetwork;
+import org.encog.util.obj.SerializeObject;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import javax.mail.Message;
 import java.io.File;
+import java.io.IOException;
 import java.net.URISyntaxException;
 import java.net.URL;
 import java.nio.file.Path;
@@ -29,7 +31,7 @@ public class Runner {
         logger = LoggerFactory.getLogger(Runner.class);
         //extractFeatures();
 
-        runML("?:B->SIGMOID->12:B->SIGMOID->12:B->SIGMOID->?");
+        runML("?:B->SIGMOID->40:B->SIGMOID->?");
     }
 
     /**
@@ -60,27 +62,22 @@ public class Runner {
         VersatileMLDataSet data = NeuralNets.processData();
         EncogModel model = NeuralNets.prepareModel(data, MLMethodFactory.TYPE_FEEDFORWARD, architecture);
         NormalizationHelper helper = data.getNormHelper();
+        
+        BasicNetwork classifier = (BasicNetwork) NeuralNets.trainNeuralNetwork(model);
+        TrainResults results = calculateMetrics(classifier, helper);
+        printResults(architecture, results);
 
-        TrainResults results = new TrainResults();
-        int runs = 0;
-        for (; runs < 5; runs++) {
-            BasicNetwork classifier = (BasicNetwork) NeuralNets.trainNeuralNetwork(model);
-            calculateMetrics(classifier, helper, results);
+        try {
+            SerializeObject.save(new File(architecture), classifier);
+            SerializeObject.save(new File(architecture + " - Normaliser"), helper);
+        } catch (IOException e) {
+            e.printStackTrace();
         }
 
-        results.setError(results.getError() / runs);
-        results.setAccuracy(results.getAccuracy() / runs);
-        results.setPrecision(results.getPrecision() / runs);
-        results.setRecall(results.getRecall() / runs);
-        results.setF1(results.getF1() / runs);
-        results.setFpr(results.getFpr() / runs);
-        results.setFnr(results.getFnr() / runs);
-
-        printResults(architecture, results);
         Encog.getInstance().shutdown();
     }
 
-    private static void calculateMetrics(BasicNetwork classifier, NormalizationHelper helper, TrainResults avgResults) {
+    private static TrainResults calculateMetrics(BasicNetwork classifier, NormalizationHelper helper) {
         double total = 0;
         double correct = 0;
         double truePositive = 0;
@@ -120,13 +117,17 @@ public class Runner {
         double precision = truePositive / (truePositive + falsePositive);
         double recall = truePositive / (truePositive + falseNegative);
 
-        avgResults.setError(avgResults.getError() + ((total - correct) / total));
-        avgResults.setAccuracy(avgResults.getAccuracy() + (correct / total));
-        avgResults.setPrecision(avgResults.getPrecision() + precision);
-        avgResults.setRecall(avgResults.getRecall() + recall);
-        avgResults.setF1(avgResults.getF1() + (2 / ((1 / precision) + (1 / recall))));
-        avgResults.setFpr(avgResults.getFpr() + (falsePositive / (trueNegative + falsePositive)));
-        avgResults.setFnr(avgResults.getFnr() + (falseNegative / (falseNegative + truePositive)));
+        TrainResults results = new TrainResults();
+
+        results.setError(((total - correct) / total));
+        results.setAccuracy((correct / total));
+        results.setPrecision(precision);
+        results.setRecall(recall);
+        results.setF1((2 / ((1 / precision) + (1 / recall))));
+        results.setFpr((falsePositive / (trueNegative + falsePositive)));
+        results.setFnr((falseNegative / (falseNegative + truePositive)));
+
+        return results;
     }
 
     private static void printResults(String architecture, TrainResults r) {

@@ -7,13 +7,21 @@ import api.models.*;
 import api.repositories.FolderRepository;
 import api.repositories.MessageRepository;
 import com.sun.mail.imap.IMAPFolder;
+import ml.FeatureExtractor;
+import org.encog.Encog;
+import org.encog.ml.data.MLData;
+import org.encog.ml.data.versatile.NormalizationHelper;
+import org.encog.neural.networks.BasicNetwork;
+import org.encog.util.obj.SerializeObject;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.core.io.ClassPathResource;
 import org.springframework.stereotype.Service;
 import utils.MessageContentUtils;
 
 import javax.mail.*;
 import javax.mail.internet.InternetAddress;
 import javax.mail.internet.MimeMessage;
+import java.io.File;
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
 import java.util.*;
@@ -30,6 +38,9 @@ public class MailService {
     private MessageRepository messageRepository;
     private FolderRepository folderRepository;
 
+    private BasicNetwork classifier;
+    private NormalizationHelper normHelper;
+
     public MailService(@Autowired AccountAuthService accountAuthService,
                        @Autowired AccountService accountService,
                        @Autowired MessageRepository messageRepository,
@@ -38,6 +49,17 @@ public class MailService {
         this.accountService = accountService;
         this.messageRepository = messageRepository;
         this.folderRepository = folderRepository;
+
+        try {
+            File classifier = new ClassPathResource("classifier", this.getClass().getClassLoader()).getFile();
+            this.classifier = (BasicNetwork) SerializeObject.load(classifier);
+
+            File normaliser = new ClassPathResource("normaliser", this.getClass().getClassLoader()).getFile();
+            this.normHelper = (NormalizationHelper) SerializeObject.load(normaliser);
+        } catch (IOException | ClassNotFoundException e) {
+            Encog.getInstance().shutdown();
+            System.exit(1);
+        }
     }
 
     public Store connect(String accountId) {
@@ -85,7 +107,6 @@ public class MailService {
 
         try {
             Session session = Session.getInstance(props);
-            session.setDebug(true);
             Store store = session.getStore("imap");
             store.connect(settings.getImapHost(), Integer.valueOf(settings.getImapPort()), account.getEmail(), password);
 
@@ -141,6 +162,7 @@ public class MailService {
                 }
             }
         } catch (Exception e) {
+            e.printStackTrace();
             return false;
         }
 
@@ -260,6 +282,7 @@ public class MailService {
                 }
             }
         } catch (Exception e) {
+            e.printStackTrace();
             successful.set(false);
         }
 
@@ -284,6 +307,7 @@ public class MailService {
 
         Integer messageNumber = m.getMessageNumber();
         long received = m.getReceivedDate().getTime();
+
         String sender = m.getFrom() != null && m.getFrom().length > 0 ? m.getFrom()[0].toString() : "Unknown Sender";
 
         ArrayList<String> to = new ArrayList<>();
@@ -305,6 +329,27 @@ public class MailService {
         String subject = m.getSubject();
         Boolean seen = m.isSet(Flags.Flag.SEEN);
 
+        // Extract features from the Message
+        FeatureExtractor fe = new FeatureExtractor(m);
+        fe.extractFeatures();
+        Map<String, Object> features = fe.getValues();
+
+        // Normalise the features
+        String[] data = new String[24];
+        int i = 0;
+        for (Map.Entry<String, Object> entry : features.entrySet()) {
+            data[i] = String.valueOf(entry.getValue());
+            i++;
+        }
+        MLData input = normHelper.allocateInputVector();
+        normHelper.normalizeInputVector(data, input.getData(), false);
+
+        // Classify and determine result
+        MLData output = this.classifier.compute(input);
+        String predictedClass = this.normHelper.denormalizeOutputVectorToString(output)[0];
+
+        Boolean phishing = predictedClass.equals("phishing");
+
         Enumeration<Header> headersObjs = m.getAllHeaders();
         ArrayList<SerializableHeader> headers = new ArrayList<>();
         while (headersObjs.hasMoreElements()) {
@@ -317,11 +362,11 @@ public class MailService {
         try {
             content = MessageContentUtils.getMessageContent(m);
         } catch (UnsupportedEncodingException e) {
-            content = "Could not display content in the specified format.";
+            content = "Could not display content.";
         }
 
         DetailedMessage d = new DetailedMessage(messageUid, messageNumber, headers, received, sender, to, cc, subject,
-                seen, false, content, df); // TODO: update with model result
+                seen, phishing, content, df);
         d.setAccount(account);
         return d;
     }
