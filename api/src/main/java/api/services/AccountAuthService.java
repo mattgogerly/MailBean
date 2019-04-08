@@ -57,20 +57,15 @@ public class AccountAuthService {
         return sessionStorage.get(accountId);
     }
 
-    String refreshOAuth(String refreshToken) {
-        try {
-            TokenResponse response = new RefreshTokenRequest(new NetHttpTransport(), new JacksonFactory(), new GenericUrl(
-                    "https://www.googleapis.com/oauth2/v4/token"), refreshToken)
-                    .setClientAuthentication(new BasicAuthentication(
-                            "634807762350-ohpmnrkua0cj7nlkfkpbvlirn1dchudh.apps.googleusercontent.com",
-                            "xnhTTXlur3LIIOueUXSaPKXW"))
-                    .execute();
+    String refreshOAuth(String refreshToken) throws IOException {
+        TokenResponse response = new RefreshTokenRequest(new NetHttpTransport(), new JacksonFactory(), new GenericUrl(
+                "https://www.googleapis.com/oauth2/v4/token"), refreshToken)
+                .setClientAuthentication(new BasicAuthentication(
+                        "634807762350-ohpmnrkua0cj7nlkfkpbvlirn1dchudh.apps.googleusercontent.com",
+                        "xnhTTXlur3LIIOueUXSaPKXW"))
+                .execute();
 
-            return response.getAccessToken();
-        } catch (IOException e) {
-            e.printStackTrace();
-            return null;
-        }
+        return response.getAccessToken();
     }
 
 }

@@ -4,7 +4,6 @@ import api.exceptions.BadRequestException;
 import api.exceptions.NoAuthenticationDetailsProvidedException;
 import api.exceptions.ResourceNotFoundException;
 import api.models.*;
-import api.repositories.AccountRepository;
 import api.repositories.FolderRepository;
 import api.repositories.MessageRepository;
 import com.sun.mail.imap.IMAPFolder;
@@ -27,25 +26,22 @@ import static java.lang.Math.toIntExact;
 public class MailService {
 
     private AccountAuthService accountAuthService;
-    private AccountRepository accountRepository;
+    private AccountService accountService;
     private MessageRepository messageRepository;
     private FolderRepository folderRepository;
 
     public MailService(@Autowired AccountAuthService accountAuthService,
-                       @Autowired AccountRepository accountRepository,
+                       @Autowired AccountService accountService,
                        @Autowired MessageRepository messageRepository,
                        @Autowired FolderRepository folderRepository) {
         this.accountAuthService = accountAuthService;
-        this.accountRepository = accountRepository;
+        this.accountService = accountService;
         this.messageRepository = messageRepository;
         this.folderRepository = folderRepository;
     }
 
     public Store connect(String accountId) {
         Account account = getAccount(accountId);
-        if (account == null) {
-            throw new ResourceNotFoundException();
-        }
 
         Store currentStore = this.accountAuthService.getStore(account.getId());
         if (currentStore != null && currentStore.isConnected()) {
@@ -63,7 +59,12 @@ public class MailService {
 
         // if it's Gmail we need to use the refresh token to get the access token
         if (account.getProvider().equals("gmail.com")) {
-            password = accountAuthService.refreshOAuth(password);
+            try {
+                password = accountAuthService.refreshOAuth(password);
+            } catch (IOException e) {
+                return null;
+            }
+
             props.put("mail.imap.auth.mechanisms", "XOAUTH2");
             props.put("mail.smtp.auth.mechanisms", "XOAUTH2");
         }
@@ -493,7 +494,7 @@ public class MailService {
     }
 
     private Account getAccount(String accountId) {
-        Account account = this.accountRepository.findById(accountId).orElse(null);
+        Account account = this.accountService.getAccountById(accountId);
         if (account == null) {
             throw new ResourceNotFoundException();
         }

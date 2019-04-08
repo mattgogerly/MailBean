@@ -33,6 +33,7 @@ public class AccountController {
     }
 
     @PostMapping("/accounts")
+    @ResponseStatus(HttpStatus.CREATED)
     public Account addAccount(@RequestBody Account newAccount) {
         return accountService.addAccount(newAccount);
     }
@@ -51,7 +52,6 @@ public class AccountController {
     public boolean useAccount(@PathVariable(name = "id") String id, @RequestBody Map<String, String> payload) {
         String password = payload.get("password");
         if (password == null) {
-            System.err.println("here");
             throw new BadRequestException();
         }
 
@@ -60,12 +60,8 @@ public class AccountController {
             throw new ResourceNotFoundException();
         }
 
-        if (account.checkValidAuth(password)) {
-            accountAuthService.addAccount(id, password);
-            return true;
-        } else {
-            return false;
-        }
+        accountAuthService.addAccount(id, password);
+        return true;
     }
 
     @DeleteMapping("/accounts/{id}")

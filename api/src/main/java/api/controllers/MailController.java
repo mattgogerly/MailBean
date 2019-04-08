@@ -5,6 +5,7 @@ import api.models.LocalResponse;
 import api.models.NewMessageInfo;
 import api.services.MailService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 
 import javax.mail.Store;
@@ -57,6 +58,7 @@ public class MailController {
         return mailService.markRead(account, uid);
     }
 
+    @ResponseStatus(HttpStatus.CREATED)
     @PostMapping("/smtp/{account}")
     public boolean sendMessage(@PathVariable(name = "account") String account,
                                @RequestBody NewMessageInfo info) {

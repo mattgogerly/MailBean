@@ -38,8 +38,4 @@ public class Account {
         this.provider = provider;
         this.connectionSettings = connectionSettings;
     }
-
-    public boolean checkValidAuth(String password) {
-        return true;
-    }
 }
