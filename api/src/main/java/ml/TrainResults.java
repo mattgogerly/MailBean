@@ -8,7 +8,6 @@ import lombok.Setter;
  *
  * @author mattgogerly
  */
-
 @Getter
 @Setter
 class TrainResults {
