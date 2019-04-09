@@ -17,6 +17,11 @@ import java.io.IOException;
 import java.net.URISyntaxException;
 import java.net.URL;
 
+/**
+ * Class to facilitate obtaining data from files and training a neural network.
+ *
+ * @author mattgogerly
+ */
 class NeuralNets {
 
     /**

@@ -20,10 +20,11 @@ import java.util.*;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-
 /**
  * Class to facilitate the extraction of features from an email in order to produce an input for the Machine Learning
  * models.
+ *
+ * @author mattgogerly
  */
 public class FeatureExtractor {
 

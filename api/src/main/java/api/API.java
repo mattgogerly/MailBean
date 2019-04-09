@@ -10,6 +10,11 @@ import org.springframework.web.filter.CorsFilter;
 import java.util.Arrays;
 import java.util.Collections;
 
+/**
+ * Driver class for the API
+ *
+ * @author mattgogerly
+ */
 @SpringBootApplication
 public class API {
 

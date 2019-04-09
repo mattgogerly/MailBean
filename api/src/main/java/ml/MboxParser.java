@@ -8,7 +8,9 @@ import java.nio.file.Path;
 import java.util.Properties;
 
 /**
- * Class to read in emails from a .mbox file
+ * Class to read in emails from a .mbox file.
+ *
+ * @author mattgogerly
  */
 final class MboxParser {
 

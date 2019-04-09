@@ -5,7 +5,9 @@ import java.util.Map;
 import java.util.Set;
 
 /**
- * Static class to write the results of Feature extraction to a file
+ * Static class to write the results of Feature extraction to a file.
+ *
+ * @author mattgogerly
  */
 class FeatureWriter {
 

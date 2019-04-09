@@ -3,6 +3,12 @@ package ml;
 import lombok.Getter;
 import lombok.Setter;
 
+/**
+ * Class to store training results from cross-validation.
+ *
+ * @author mattgogerly
+ */
+
 @Getter
 @Setter
 class TrainResults {

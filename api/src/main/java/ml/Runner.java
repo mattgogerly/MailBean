@@ -18,6 +18,11 @@ import java.net.URL;
 import java.nio.file.Path;
 import java.util.Map;
 
+/**
+ * Driver class to run ML related tasks
+ *
+ * @author mattgogerly
+ */
 public class Runner {
 
     private static Logger logger;
