@@ -7,25 +7,39 @@ import org.encog.ml.data.versatile.columns.ColumnDefinition;
 import org.encog.ml.data.versatile.columns.ColumnType;
 import org.encog.ml.data.versatile.sources.CSVDataSource;
 import org.encog.ml.data.versatile.sources.VersatileDataSource;
+import org.encog.ml.factory.MLMethodFactory;
 import org.encog.ml.factory.MLTrainFactory;
 import org.encog.ml.model.EncogModel;
 import org.encog.util.csv.CSVFormat;
 
 import java.io.File;
+import java.io.IOException;
 import java.net.URISyntaxException;
 import java.net.URL;
 
 class NeuralNets {
 
+    /**
+     * Intentionally empty constructor
+     */
     private NeuralNets() {
 
     }
 
+    /**
+     * Takes a normalised EncogModel and performs 5-fold cross-validation to obtain the best classifier.
+     * @param model The normalised model that is ready to be trained
+     * @return The best model resulting from 5 fold cross-validation
+     */
     static MLClassification trainNeuralNetwork(EncogModel model) {
         model.holdBackValidation(0, false, 1001);
         return (MLClassification) model.crossvalidate(5, false);
     }
 
+    /**
+     * Defines the columns of the input data and analyses it ready for normalisation.
+     * @return The analysed VersatileMLDataSet
+     */
     static VersatileMLDataSet processData() {
         VersatileDataSource dataSource = getData("TRAINING");
         VersatileMLDataSet data = new VersatileMLDataSet(dataSource);
@@ -62,15 +76,24 @@ class NeuralNets {
         return data;
     }
 
-    static EncogModel prepareModel(VersatileMLDataSet data, String modelType, String architecture) {
+    /**
+     * @param data VersatileMLDataSet that has had columns defined and analysed
+     * @param architecture The architecture of the model
+     * @return The normalised dataset
+     */
+    static EncogModel prepareModel(VersatileMLDataSet data, String architecture) {
         EncogModel model = new EncogModel(data);
-        model.selectMethod(data, modelType, architecture, MLTrainFactory.TYPE_RPROP, "");
+        model.selectMethod(data, MLMethodFactory.TYPE_FEEDFORWARD, architecture, MLTrainFactory.TYPE_RPROP, "");
         model.selectTrainingType(data);
         data.normalize();
 
         return model;
     }
 
+    /**
+     * @param type Either TRAINING or TESTING depending on data required
+     * @return A populated CSVDataSource with the specified data
+     */
     static CSVDataSource getData(String type) {
         String filename;
         if (type.equals("TRAINING")) {
@@ -79,12 +102,15 @@ class NeuralNets {
             filename = "test.csv";
         }
 
-        final URL csv = Runner.class.getClassLoader().getResource(filename);
         File source;
-
         try {
+            final URL csv = Runner.class.getClassLoader().getResource(filename);
+            if (csv == null) {
+                throw new IOException("Classpath resource missing");
+            }
+
             source = new File(csv.toURI());
-        } catch (URISyntaxException e) {
+        } catch (URISyntaxException | IOException e) {
             throw new EncogError("Source file is missing");
         }
 

@@ -4,7 +4,6 @@ import org.encog.Encog;
 import org.encog.ml.data.MLDataPair;
 import org.encog.ml.data.versatile.NormalizationHelper;
 import org.encog.ml.data.versatile.VersatileMLDataSet;
-import org.encog.ml.factory.MLMethodFactory;
 import org.encog.ml.model.EncogModel;
 import org.encog.neural.networks.BasicNetwork;
 import org.encog.util.obj.SerializeObject;
@@ -29,19 +28,21 @@ public class Runner {
      */
     public static void main(String[] args) {
         logger = LoggerFactory.getLogger(Runner.class);
-        //extractFeatures();
-
         runML("?:B->SIGMOID->40:B->SIGMOID->?");
     }
 
     /**
      * Load in a specified file and extract the features from each email in the file. The result is written to
      * output.csv.
+     * @param filename The classpath filename to load data and extract features from
      */
-    private static void extractFeatures() {
-        URL resource = Runner.class.getClassLoader().getResource("nazario.mbox");
-
+    private static void extractFeatures(String filename) {
         try {
+            URL resource = Runner.class.getClassLoader().getResource(filename);
+            if (resource == null) {
+                throw new IOException("Classpath resource missing");
+            }
+
             Path path = new File(resource.toURI()).toPath();
             Message[] emails = MboxParser.readFromMboxFile(path);
 
@@ -53,14 +54,14 @@ public class Runner {
                 FeatureWriter.writeFeatureTitles("output.csv", values);
                 FeatureWriter.writeFeatures("output.csv", "phishing", values);
             }
-        } catch (NullPointerException | URISyntaxException e) {
+        } catch (IOException | URISyntaxException e) {
             logger.error("mbox file not found", e);
         }
     }
 
     private static void runML(String architecture) {
         VersatileMLDataSet data = NeuralNets.processData();
-        EncogModel model = NeuralNets.prepareModel(data, MLMethodFactory.TYPE_FEEDFORWARD, architecture);
+        EncogModel model = NeuralNets.prepareModel(data, architecture);
         NormalizationHelper helper = data.getNormHelper();
         
         BasicNetwork classifier = (BasicNetwork) NeuralNets.trainNeuralNetwork(model);

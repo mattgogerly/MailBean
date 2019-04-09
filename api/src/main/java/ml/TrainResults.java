@@ -15,6 +15,9 @@ class TrainResults {
     private double fpr = 0;
     private double fnr = 0;
 
+    /**
+     * Intentionally empty constructor
+     */
     TrainResults() {
     }
 }

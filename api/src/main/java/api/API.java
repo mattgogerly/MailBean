@@ -13,13 +13,17 @@ import java.util.Collections;
 @SpringBootApplication
 public class API {
 
+    /**
+     * Run the API
+     * @param args No arguments expected
+     */
     public static void main(String[] args) {
         SpringApplication.run(API.class, args);
     }
 
     /**
      * https://stackoverflow.com/a/51721298
-     * @return
+     * @return A configured CorsFilter
      */
     @Bean
     public CorsFilter corsFilter() {
