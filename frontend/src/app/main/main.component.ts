@@ -1,6 +1,7 @@
-import { Component, OnInit } from '@angular/core';
+import {Component, OnInit, ViewChild} from '@angular/core';
 import { select, Store } from '@ngrx/store';
 import { take } from 'rxjs/operators';
+import { MessageListComponent } from "../message-list/message-list.component";
 
 @Component({
   selector: 'app-main',
@@ -10,6 +11,7 @@ import { take } from 'rxjs/operators';
 export class MainComponent implements OnInit {
 
   loading = true;
+  @ViewChild(MessageListComponent) child: MessageListComponent ;
 
   constructor(private store: Store<any>) { }
 
@@ -20,6 +22,12 @@ export class MainComponent implements OnInit {
           setTimeout(() => this.loading = false, 500);
         }
       });
+  }
+
+  scrollMessageList() {
+    if (this.child != null) {
+      this.child.scroll();
+    }
   }
 
 }
