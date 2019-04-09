@@ -26,11 +26,13 @@ export class MessageListComponent implements OnInit {
     this.store.pipe(select((state: any) => state.messages))
       .subscribe(messageState => {
         this.currentFolder = messageState.currentFolder;
+
         this.messages = messageState.messages
           .filter(message => message.folder.name.toLowerCase() === this.currentFolder.toLowerCase())
           .sort((a, b) => {
             return b.received - a.received;
           });
+
         this.currentMessage = messageState.messages.find(m => m.uid === messageState.currentMessage);
         this.refreshing = messageState.serverPending || messageState.localPending;
       });
@@ -67,6 +69,15 @@ export class MessageListComponent implements OnInit {
     this.hasFocus = this.eRef.nativeElement.contains(event.target);
   }
 
+  scroll() {
+    const list = <HTMLElement> document.querySelector('.message-list');
+    if (list != null) {
+      if (list.scrollTop >= (0.8 * list.scrollHeight) && !this.refreshing) {
+        this.store.dispatch(new SyncServerPending({id: this.currentAccount, limit: 25}));
+      }
+    }
+  }
+
   selectMessage(message: DetailedMessage) {
     if (!message.seen) {
       this.store.dispatch(new ReadMessagePending(message));
@@ -76,7 +87,7 @@ export class MessageListComponent implements OnInit {
   }
 
   refresh() {
-    this.store.dispatch(new SyncServerPending({id: this.currentAccount}));
+    this.store.dispatch(new SyncServerPending({id: this.currentAccount, limit: -1}));
     this.refreshing = true;
   }
 
