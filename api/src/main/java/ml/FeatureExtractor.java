@@ -88,7 +88,7 @@ public class FeatureExtractor {
     }
 
     /**
-     * @return The Map of String -> Object representing the features extracted from the email
+     * @return The Map of String to Object representing the features extracted from the email
      */
     public Map<String, Object> getValues() {
         return this.values;
