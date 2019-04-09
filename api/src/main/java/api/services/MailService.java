@@ -199,7 +199,7 @@ public class MailService {
                     existingMessagesResult.weakCompareAndSet(true, processExistingMessages(account, df, f));
                 }
 
-                if (df.getLatestUid().equals(0L) || df.getLatestUid() < latestUid) {
+                if (df.getLatestUid().equals(0L) || df.getLatestUid() < latestUid || limit > 0L) {
                     Message[] messages = f.getMessages();
                     f.fetch(messages, fp);
 
@@ -229,8 +229,14 @@ public class MailService {
                                 min = validUids.get(0);
                             } else {
                                 // otherwise get the limit as min
-                                int low = toIntExact(validUids.size() - limit);
-                                min = validUids.get(low);
+                                Long currentOldest = df.getOldestUid();
+                                int currentLow = validUids.indexOf(currentOldest);
+
+                                if (currentLow < limit) {
+                                    min = validUids.get(0);
+                                } else {
+                                    min = validUids.get(toIntExact(currentLow - limit));
+                                }
                             }
 
                             newMessagesResult.weakCompareAndSet(true, processNewMessages(account, df, f, min, max));
@@ -271,7 +277,6 @@ public class MailService {
 
             for (Message m : messages) {
                 try {
-
                     DetailedMessage dm = processNewMessage(account, m, df, uf);
 
                     if (dm != null) {
