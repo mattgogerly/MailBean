@@ -1,7 +1,7 @@
-import {Component, OnInit, ViewChild} from '@angular/core';
+import { Component, OnInit, ViewChild } from '@angular/core';
 import { select, Store } from '@ngrx/store';
 import { take } from 'rxjs/operators';
-import { MessageListComponent } from "../message-list/message-list.component";
+import { MessageListComponent } from '../message-list/message-list.component';
 
 @Component({
   selector: 'app-main',
