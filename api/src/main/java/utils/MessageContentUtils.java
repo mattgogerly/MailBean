@@ -95,13 +95,26 @@ public final class MessageContentUtils {
             i.close();
             result = new String(o.toByteArray());
         } else if (part.getContent() instanceof BASE64DecoderStream) {
-            // image in Base 64
-            BASE64DecoderStream base64DecoderStream = (BASE64DecoderStream) part.getContent();
-            byte[] byteArray = IOUtils.toByteArray(base64DecoderStream);
-            byte[] encodeBase64 = Base64.encodeBase64(byteArray);
-            result = new String(encodeBase64, "UTF-8");
+            String[] typeHeaders = part.getHeader("Content-Type");
+            if (typeHeaders.length > 0) {
+                String header = typeHeaders[0];
 
-            return "<img src=\"data:image/jpg;base64, " + result + "\">";
+                if (header.contains("image")) {
+                    // image in Base 64
+                    BASE64DecoderStream base64DecoderStream = (BASE64DecoderStream) part.getContent();
+                    byte[] byteArray = IOUtils.toByteArray(base64DecoderStream);
+                    byte[] encodeBase64 = Base64.encodeBase64(byteArray);
+                    result = new String(encodeBase64, "UTF-8");
+
+                    if (header.contains("png")) {
+                        return "<img src=\"data:image/png;base64," + result + "\">";
+                    } else {
+                        return "<img src=\"data:image/jpg;base64," + result + "\">";
+                    }
+                }
+            }
+
+            return "";
         } else {
             result = part.getContent().toString();
         }
