@@ -32,7 +32,7 @@ export class MessageEffects {
       this.cachedAccountId = id;
       return [
         new MessageActions.GetLocalPending(id),
-        new MessageActions.SyncServerPending({id: id}),
+        new MessageActions.SyncServerPending({id: id, limit: -1}),
       ];
     })
   );
@@ -41,7 +41,7 @@ export class MessageEffects {
   syncWithServer$: Observable<Action> = this.actions$.pipe(
     ofType<SyncServerPending>(MessageActions.ActionTypes.SyncServerPending),
     switchMap(action => {
-      return this.messageService.syncWithServer(action.payload.id).pipe(
+      return this.messageService.syncWithServer(action.payload.id, action.payload.limit).pipe(
         map(
           response => new MessageActions.SyncServerSuccess(response)
         ),
@@ -153,7 +153,7 @@ export class MessageEffects {
     withLatestFrom(this.store),
     map(([action, storeState]) => storeState.accountsInfo.currentAccount),
     switchMap(id => {
-      return of(new MessageActions.SyncServerPending({id: id}));
+      return of(new MessageActions.SyncServerPending({id: id, limit: -1}));
     })
   );
 }

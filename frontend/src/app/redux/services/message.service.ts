@@ -12,8 +12,13 @@ export class MessageService {
 
   constructor(private httpClient: HttpClient) { }
 
-  syncWithServer(id: string) {
-    return this.httpClient.get<boolean>(environment.localApi + '/imap/' + id + '/server');
+  syncWithServer(id: string, limit: number) {
+    if (limit < 0) {
+      // sync existing messages
+      return this.httpClient.get<boolean>(environment.localApi + '/imap/' + id + '/server');
+    } else {
+      return this.httpClient.get<boolean>(environment.localApi + '/imap/' + id + '/server/' + limit);
+    }
   }
 
   getLocal(id: string) {
