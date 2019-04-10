@@ -5,6 +5,11 @@ import lombok.Setter;
 
 import javax.persistence.*;
 
+/**
+ * Class representing an email Account that has been added to the database.
+ *
+ * @author mattgogerly
+ */
 @Entity
 @Table(name = "accounts")
 @Getter
@@ -27,10 +32,22 @@ public class Account {
     @Column(name = "connection_settings")
     private ConnectionSettings connectionSettings;
 
+    /**
+     * Intentionally empty constructor
+     */
     public Account() {
 
     }
 
+    /**
+     * Create a new Account
+     *
+     * @param id Id of the Account
+     * @param name Name of the Account
+     * @param email Email of the Account
+     * @param provider Provider of the Account
+     * @param connectionSettings Connection information for the Account
+     */
     public Account(String id, String name, String email, String provider, ConnectionSettings connectionSettings) {
         this.id = id;
         this.name = name;

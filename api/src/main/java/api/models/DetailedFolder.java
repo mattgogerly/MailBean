@@ -10,6 +10,11 @@ import org.hibernate.annotations.OnDeleteAction;
 import javax.persistence.*;
 import java.io.Serializable;
 
+/**
+ * Class to store an IMAP Folder with extra information to faciliate retrieving new messages.
+ *
+ * @author mattgogerly
+ */
 @Entity
 @Table(name = "folders")
 @JsonIgnoreProperties({"hibernateLazyInitializer", "handler"})
@@ -41,10 +46,22 @@ public class DetailedFolder implements Serializable {
     @JsonIgnore
     private Account account;
 
+    /**
+     * Intentionally empty constructor
+     */
     public DetailedFolder() {
 
     }
 
+    /**
+     * Create a new DetailedFolder
+     *
+     * @param name name of the folder
+     * @param unread number of unread messages
+     * @param latestUid most recent message UID
+     * @param oldestUid oldest message UID
+     * @param account Account the folde rbelongs to
+     */
     public DetailedFolder(String name, Integer unread, Long latestUid, Long oldestUid, Account account) {
         this.name = name;
         this.unread = unread;

@@ -11,6 +11,12 @@ import javax.persistence.*;
 import java.io.Serializable;
 import java.util.ArrayList;
 
+/**
+ * Class representing a message that has been downloaded from an IMAP server with the information required
+ * to display it on the frontend and make changes to it.
+ *
+ * @author mattgogerly
+ */
 @Entity
 @Table(name = "messages")
 @JsonIgnoreProperties({"hibernateLazyInitializer", "handler"})
@@ -69,6 +75,29 @@ public class DetailedMessage implements Serializable {
     @JsonIgnoreProperties({"id", "unread", "account"})
     private DetailedFolder folder;
 
+    /**
+     * Intentionally empty constructor
+     */
+    public DetailedMessage() {
+
+    }
+
+    /**
+     * Create a new DetailedMessage object
+     *
+     * @param uid UID of the message
+     * @param messageNum Message number from IMAP
+     * @param headers Headers of the message
+     * @param received Received date as UNIX timestamp
+     * @param sender Senders email address
+     * @param to List of addresses the email was sent to
+     * @param cc List of addresses the email was sent as cc to
+     * @param subject Subject of the message
+     * @param seen Whether the message has been read or not
+     * @param phishing Whether the message has been classified as phishing
+     * @param content The content of the message
+     * @param folder The folder the message belongs to
+     */
     public DetailedMessage(Long uid, Integer messageNum, ArrayList<SerializableHeader> headers, Long received,
                            String sender, ArrayList<String> to, ArrayList<String> cc, String subject, Boolean seen,
                            Boolean phishing, String content, DetailedFolder folder) {
@@ -84,10 +113,6 @@ public class DetailedMessage implements Serializable {
         this.phishing = phishing;
         this.content = content;
         this.folder = folder;
-    }
-
-    public DetailedMessage() {
-
     }
 
 }
