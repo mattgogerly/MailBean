@@ -98,16 +98,6 @@ public class MailControllerTest {
     }
 
     @Test
-    public void getMessage() throws Exception {
-        when(mailService.getMessageByUid(1L)).thenReturn(message);
-
-        this.mockMvc.perform(get("/imap/123/1"))
-                .andDo(print())
-                .andExpect(status().isOk())
-                .andExpect(content().string(containsString("Test subject")));
-    }
-
-    @Test
     public void getOlderMessages() throws Exception {
         when(mailService.getOlderMessages("123", 50L)).thenReturn(true);
 
