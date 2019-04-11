@@ -11,7 +11,7 @@ import java.util.Arrays;
 import java.util.Collections;
 
 /**
- * Driver class for the API
+ * Driver class for the API.
  *
  * @author mattgogerly
  */
@@ -19,7 +19,8 @@ import java.util.Collections;
 public class API {
 
     /**
-     * Run the API
+     * Run the API.
+     *
      * @param args No arguments expected
      */
     public static void main(String[] args) {
@@ -27,7 +28,8 @@ public class API {
     }
 
     /**
-     * https://stackoverflow.com/a/51721298
+     * Adapted from https://stackoverflow.com/a/51721298
+     *
      * @return A configured CorsFilter
      */
     @Bean
@@ -37,7 +39,7 @@ public class API {
         config.setAllowCredentials(true);
         config.setAllowedOrigins(Collections.singletonList("*"));
         config.setAllowedHeaders(Arrays.asList("Origin", "Content-Type", "Accept"));
-        config.setAllowedMethods(Arrays.asList("GET", "POST", "PUT", "OPTIONS", "DELETE", "PATCH"));
+        config.setAllowedMethods(Arrays.asList("GET", "POST", "PUT", "OPTIONS", "DELETE"));
         source.registerCorsConfiguration("/**", config);
         return new CorsFilter(source);
     }
