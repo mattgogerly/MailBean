@@ -10,9 +10,8 @@ export const initialState: any = {
   composing: false,
   refreshRequired: false,
   localPending: false,
-  localError: false,
   serverPending: false,
-  serverError: false
+  error: false
 };
 
 export function messageReducer(
@@ -21,32 +20,32 @@ export function messageReducer(
 ) {
   switch (action.type) {
     case MessageActions.ActionTypes.GetLocalPending: {
-      return Object.assign({}, state, {localPending: true, localError: false});
+      return Object.assign({}, state, {localPending: true, error: false});
     }
 
     case MessageActions.ActionTypes.GetLocalSuccess: {
       return Object.assign({}, state, {
         localPending: false,
-        localError: false,
+        error: false,
         folders: sortFolders(action.payload.folders),
         messages: action.payload.messages
       });
     }
 
     case MessageActions.ActionTypes.GetLocalFailure: {
-      return Object.assign({}, state, {localPending: false, localError: true});
+      return Object.assign({}, state, {localPending: false, error: action.payload});
     }
 
     case MessageActions.ActionTypes.SyncServerPending: {
-      return Object.assign({}, state, {serverPending: true, serverError: false});
+      return Object.assign({}, state, {serverPending: true, error: false});
     }
 
     case MessageActions.ActionTypes.SyncServerSuccess: {
-      return Object.assign({}, state, {serverPending: false, serverError: false});
+      return Object.assign({}, state, {serverPending: false, error: false});
     }
 
     case MessageActions.ActionTypes.SyncServerFailure: {
-      return Object.assign({}, state, {serverPending: false, serverError: true});
+      return Object.assign({}, state, {serverPending: false, error: action.payload});
     }
 
     case MessageActions.ActionTypes.ChangeActiveFolder: {
@@ -79,6 +78,10 @@ export function messageReducer(
       });
 
       return Object.assign({}, state, {messages: messages, folders: folders, currentMessage: currentMessage});
+    }
+
+    case MessageActions.ActionTypes.ReadMessageFailure: {
+      return Object.assign({}, state, {serverPending: false, error: action.payload});
     }
 
     case MessageActions.ActionTypes.ToggleComposing: {
@@ -114,7 +117,28 @@ export function messageReducer(
         return f;
       });
 
-      return Object.assign({}, state, {messages: newMessagesArr, folders: folders, currentMessage: newCurrentMessage.uid});
+      return Object.assign({}, state, {
+        messages: newMessagesArr,
+        folders: folders,
+        currentMessage: newCurrentMessage.uid,
+        error: false
+      });
+    }
+
+    case MessageActions.ActionTypes.DeleteMessageFailure: {
+      return Object.assign({}, state, {serverPending: false, error: action.payload});
+    }
+
+    case MessageActions.ActionTypes.SendMessagePending: {
+      return Object.assign({}, state, {serverPending: true, error: false});
+    }
+
+    case MessageActions.ActionTypes.SendMessageSuccess: {
+      return Object.assign({}, state, {serverPending: false, error: false});
+    }
+
+    case MessageActions.ActionTypes.SendMessageFailure: {
+      return Object.assign({}, state, {serverPending: false, error: action.payload});
     }
 
     default: {

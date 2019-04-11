@@ -30,7 +30,8 @@ import { GmailAuthComponent } from './auth/gmail-auth/gmail-auth.component';
 import { OtherAuthComponent } from './auth/other-auth/other-auth.component';
 
 import { MatCardModule, MatListModule, MatProgressSpinnerModule, MatFormFieldModule, MatButtonModule,
-  MatInputModule, MatTabsModule, MatBadgeModule, MatChipsModule, MatTooltipModule, MatSelectModule } from '@angular/material';
+  MatInputModule, MatTabsModule, MatBadgeModule, MatChipsModule, MatTooltipModule, MatSelectModule,
+  MatSnackBarModule } from '@angular/material';
 import { MDBBootstrapModule } from 'angular-bootstrap-md';
 import { CKEditorModule } from '@ckeditor/ckeditor5-angular';
 
@@ -77,6 +78,7 @@ import { CKEditorModule } from '@ckeditor/ckeditor5-angular';
     MatChipsModule,
     MatTooltipModule,
     MatSelectModule,
+    MatSnackBarModule,
     MDBBootstrapModule.forRoot(),
     CKEditorModule
   ],

@@ -43,10 +43,11 @@ export class MessageEffects {
     switchMap(action => {
       return this.messageService.syncWithServer(action.payload.id, action.payload.limit).pipe(
         map(
-          response => new MessageActions.SyncServerSuccess(response)
+          () => new MessageActions.SyncServerSuccess()
         ),
-        catchError(error => {
-          return of(new MessageActions.SyncServerFailure(error));
+        catchError(() => {
+          return of(new MessageActions.SyncServerFailure('Could not sync with the backend. Please restart the ' +
+            'client and try again.'));
         })
       );
     })
@@ -60,8 +61,9 @@ export class MessageEffects {
         map(
           response => new MessageActions.GetLocalSuccess(response)
         ),
-        catchError(error => {
-          return of(new MessageActions.GetLocalFailure(error));
+        catchError(() => {
+          return of(new MessageActions.GetLocalFailure('Could not retrieve data from local storage. Please' +
+            'restart the client and try again.'));
         })
       );
     })
@@ -109,10 +111,11 @@ export class MessageEffects {
     switchMap(([action, storeState]) => {
       return this.messageService.delete(storeState.accountsInfo.currentAccount, action.payload).pipe(
         map(
-          response => new MessageActions.DeleteMessageSuccess(response)
+          () => new MessageActions.DeleteMessageSuccess()
         ),
-        catchError(error => {
-          return of(new MessageActions.DeleteMessageFailure(error));
+        catchError(() => {
+          return of(new MessageActions.DeleteMessageFailure('Could not delete message. Please refresh and try ' +
+            'again.'));
         })
       );
     }));
@@ -124,10 +127,11 @@ export class MessageEffects {
     switchMap(([action, storeState]) => {
       return this.messageService.markRead(storeState.accountsInfo.currentAccount, action.payload).pipe(
         map(
-          response => new MessageActions.ReadMessageSuccess(response)
+          () => new MessageActions.ReadMessageSuccess()
         ),
-        catchError(error => {
-          return of(new MessageActions.ReadMessageFailure(error));
+        catchError(() => {
+          return of(new MessageActions.ReadMessageFailure('Could not mark message as read. Please refresh and try' +
+            'again.'));
         })
       );
     }));
@@ -139,10 +143,11 @@ export class MessageEffects {
     switchMap(([action, storeState]) => {
       return this.messageService.sendMessage(storeState.accountsInfo.currentAccount, action.payload).pipe(
         map(
-          () => new MessageActions.SendMessageSuccess(true)
+          () => new MessageActions.SendMessageSuccess()
         ),
-        catchError(error => {
-          return of(new MessageActions.SendMessageFailure(error));
+        catchError(() => {
+          return of(new MessageActions.SendMessageFailure('Could not send message. Please restart the client and' +
+            'try again.'));
         })
       );
     }));

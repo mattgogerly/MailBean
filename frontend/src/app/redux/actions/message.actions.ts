@@ -1,6 +1,7 @@
 import { Action } from '@ngrx/store';
 import { LocalResponse } from '../models/local-response';
 import { DetailedMessage } from '../models/detailed-message';
+import {NewMessageInfo} from "../models/new-message-info";
 
 export enum ActionTypes {
   GetLocalPending = '[Messages] Get Local Pending',
@@ -17,9 +18,6 @@ export enum ActionTypes {
   ReadMessagePending = '[Message] Read Message Pending',
   ReadMessageSuccess = '[Message] Read Message Success',
   ReadMessageFailure = '[Message] Read Message Failure',
-  UnreadMessagePending = '[Message] Unread Message Pending',
-  UnreadMessageSuccess = '[Message] Unread Message Success',
-  UnreadMessageFailure = '[Message] Unread Message Failure',
   ToggleComposing = '[Message] Toggle Composing',
   SendMessagePending = '[Message] Send Message Pending',
   SendMessageSuccess = '[Message] Send Message Success',
@@ -28,7 +26,7 @@ export enum ActionTypes {
 
 export class GetLocalPending implements Action {
   readonly type = ActionTypes.GetLocalPending;
-  constructor(public payload: string) { }
+  constructor(public payload: any) { }
 }
 
 export class GetLocalSuccess implements Action {
@@ -38,7 +36,7 @@ export class GetLocalSuccess implements Action {
 
 export class GetLocalFailure implements Action {
   readonly type = ActionTypes.GetLocalFailure;
-  constructor(public payload: any) {}
+  constructor(public payload: string) {}
 }
 
 export class SyncServerPending implements Action {
@@ -48,12 +46,12 @@ export class SyncServerPending implements Action {
 
 export class SyncServerSuccess implements Action {
   readonly type = ActionTypes.SyncServerSuccess;
-  constructor(public payload: boolean = true) {}
+  constructor() {}
 }
 
 export class SyncServerFailure implements Action {
   readonly type = ActionTypes.SyncServerFailure;
-  constructor(public payload: boolean = false) {}
+  constructor(public payload: string) {}
 }
 
 export class ChangeActiveFolder implements Action {
@@ -73,12 +71,12 @@ export class DeleteMessagePending implements Action {
 
 export class DeleteMessageSuccess implements Action {
   readonly type = ActionTypes.DeleteMessageSuccess;
-  constructor(public payload: any = null) {}
+  constructor() {}
 }
 
 export class DeleteMessageFailure implements Action {
   readonly type = ActionTypes.DeleteMessageFailure;
-  constructor(public payload: any = null) {}
+  constructor(public payload: string) {}
 }
 
 export class ReadMessagePending implements Action {
@@ -88,27 +86,12 @@ export class ReadMessagePending implements Action {
 
 export class ReadMessageSuccess implements Action {
   readonly type = ActionTypes.ReadMessageSuccess;
-  constructor(public payload: any = null) {}
+  constructor() {}
 }
 
 export class ReadMessageFailure implements Action {
   readonly type = ActionTypes.ReadMessageFailure;
-  constructor(public payload: any = null) {}
-}
-
-export class UnreadMessagePending implements Action {
-  readonly type = ActionTypes.UnreadMessagePending;
-  constructor(public payload: string) { }
-}
-
-export class UnreadMessageSuccess implements Action {
-  readonly type = ActionTypes.UnreadMessageSuccess;
-  constructor(public payload: any = null) {}
-}
-
-export class UnreadMessageFailure implements Action {
-  readonly type = ActionTypes.UnreadMessageFailure;
-  constructor(public payload: any = null) {}
+  constructor(public payload: string) {}
 }
 
 export class ToggleComposing implements Action {
@@ -118,20 +101,20 @@ export class ToggleComposing implements Action {
 
 export class SendMessagePending implements Action {
   readonly type = ActionTypes.SendMessagePending;
-  constructor(public payload: any) {}
+  constructor(public payload: NewMessageInfo) {}
 }
 
 export class SendMessageSuccess implements Action {
   readonly type = ActionTypes.SendMessageSuccess;
-  constructor(public payload: boolean) {}
+  constructor() {}
 }
 
 export class SendMessageFailure implements Action {
   readonly type = ActionTypes.SendMessageFailure;
-  constructor(public payload: boolean) {}
+  constructor(public payload: string) {}
 }
 
 export type ActionsUnion = GetLocalPending | GetLocalSuccess | GetLocalFailure | SyncServerPending | SyncServerSuccess |
   SyncServerFailure | ChangeActiveFolder | ChangeActiveMessage | DeleteMessagePending | DeleteMessageSuccess |
-  DeleteMessageFailure | ReadMessagePending | ReadMessageSuccess | ReadMessageFailure | UnreadMessagePending |
-  UnreadMessageSuccess | UnreadMessageFailure | ToggleComposing | SendMessagePending | SendMessageSuccess | SendMessageFailure;
+  DeleteMessageFailure | ReadMessagePending | ReadMessageSuccess | ReadMessageFailure | ToggleComposing |
+  SendMessagePending | SendMessageSuccess | SendMessageFailure;

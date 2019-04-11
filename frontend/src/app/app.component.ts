@@ -1,9 +1,10 @@
 import { Component, OnInit } from '@angular/core';
-import { Store } from '@ngrx/store';
+import {select, Store} from '@ngrx/store';
 import { GetAccountsPending } from './redux/actions/account.actions';
 import { Observable } from 'rxjs';
 import { AccountStore } from './redux/interfaces/account-store.interface';
 import { Router } from '@angular/router';
+import {MatSnackBar} from "@angular/material";
 
 @Component({
   selector: 'app-root',
@@ -16,7 +17,7 @@ export class AppComponent implements OnInit {
   error = false;
   accountsInfo$: Observable<AccountStore>;
 
-  constructor(private store: Store<any>, private router: Router) {
+  constructor(private store: Store<any>, private router: Router, private snackBar: MatSnackBar) {
     this.accountsInfo$ = this.store.select('accountsInfo');
   }
 
@@ -37,6 +38,20 @@ export class AppComponent implements OnInit {
         // close window here
       }
     });
+
+    this.store.pipe(select((state: any) => state.messages.error))
+      .subscribe(err => {
+        if (err !== false) {
+          this.snackBar.open(err, 'X');
+        }
+      });
+
+    this.store.pipe(select((state: any) => state.accountsInfo.error))
+      .subscribe(err => {
+        if (err !== false) {
+          this.snackBar.open(err, 'X');
+        }
+      });
 
     this.loading = true;
     this.store.dispatch(new GetAccountsPending()); // fetch account info from API

@@ -24,8 +24,9 @@ export class AccountEffects {
         map(
           accounts => new AccountActions.GetAccountsSuccess(accounts)
         ),
-        catchError(error => {
-          return of(new AccountActions.GetAccountsFailure(error));
+        catchError(() => {
+          return of(new AccountActions.GetAccountsFailure('Could not get account information. ' +
+            'Try restarting the client.'));
         })
       );
     })
@@ -38,7 +39,8 @@ export class AccountEffects {
       if (action.payload.length > 0) {
         return new AccountActions.SetCurrentAccountPending(action.payload[0].id);
       } else {
-        return new AccountActions.SetCurrentAccountFailure();
+        return new AccountActions.SetCurrentAccountFailure('Could not get account. Please restart the client and' +
+          'try again.');
       }
     })
   );
@@ -51,8 +53,9 @@ export class AccountEffects {
         map(
           account => new AccountActions.AddAccountSuccess(account)
         ),
-        catchError(error => {
-          return of(new AccountActions.AddAccountFailure(error));
+        catchError(() => {
+          return of(new AccountActions.AddAccountFailure('Could not add account. Please restart the client and ' +
+            'try again.'));
         })
       );
     })
@@ -74,8 +77,9 @@ export class AccountEffects {
         map(
           () => new AccountActions.DeleteAccountSuccess(action.payload)
         ),
-        catchError(error => {
-          return of(new AccountActions.DeleteAccountFailure(error));
+        catchError(() => {
+          return of(new AccountActions.DeleteAccountFailure('Could not delete account. Please restart the client' +
+            'and try again.'));
         })
       );
     })
@@ -90,7 +94,8 @@ export class AccountEffects {
             () => new AccountActions.SetCurrentAccountSuccess(action.payload)
           ),
           catchError(() => {
-            return of(new AccountActions.SetCurrentAccountFailure());
+            return of(new AccountActions.SetCurrentAccountFailure('Could not set current account. Please restart' +
+              'the client and try again.'));
           })
         );
     })

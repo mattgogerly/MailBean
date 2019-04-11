@@ -28,7 +28,7 @@ export class GetAccountsSuccess implements Action {
 
 export class GetAccountsFailure implements Action {
   readonly type = ActionTypes.GetAccountsFailure;
-  constructor(public payload: any = null) { }
+  constructor(public payload: string) { }
 }
 
 export class AddAccountPending implements Action {
@@ -43,22 +43,22 @@ export class AddAccountSuccess implements Action {
 
 export class AddAccountFailure implements Action {
   readonly type = ActionTypes.AddAccountFailure;
-  constructor(public payload: any = null) { }
+  constructor(public payload: string) { }
 }
 
 export class DeleteAccountPending implements Action {
   readonly type = ActionTypes.DeleteAccountPending;
-  constructor(public payload: string = null) { }
+  constructor(public payload: string) { }
 }
 
 export class DeleteAccountSuccess implements Action {
   readonly type = ActionTypes.DeleteAccountSuccess;
-  constructor(public payload: string = null) {}
+  constructor(public payload: string) {}
 }
 
 export class DeleteAccountFailure implements Action {
   readonly type = ActionTypes.DeleteAccountFailure;
-  constructor(public payload: any = null) { }
+  constructor(public payload: string) { }
 }
 
 export class SetCurrentAccountPending implements Action {
@@ -73,7 +73,7 @@ export class SetCurrentAccountSuccess implements Action {
 
 export class SetCurrentAccountFailure implements Action {
   readonly type = ActionTypes.SetCurrentAccountFailure;
-  constructor(public payload: any = null) {}
+  constructor(public payload: string) {}
 }
 
 export type ActionsUnion = GetAccountsPending | GetAccountsSuccess | GetAccountsFailure | AddAccountPending |

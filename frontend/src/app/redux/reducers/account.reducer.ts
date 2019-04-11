@@ -22,7 +22,7 @@ export function accountReducer(
     }
 
     case AccountActions.ActionTypes.GetAccountsFailure: {
-      return Object.assign({}, state, {pending: false, error: true});
+      return Object.assign({}, state, {pending: false, error: action.payload});
     }
 
     case AccountActions.ActionTypes.AddAccountPending: {
@@ -34,7 +34,7 @@ export function accountReducer(
     }
 
     case AccountActions.ActionTypes.AddAccountFailure: {
-      return Object.assign({}, state, {pending: false, error: true});
+      return Object.assign({}, state, {pending: false, error: action.payload});
     }
 
     case AccountActions.ActionTypes.DeleteAccountPending: {
@@ -47,7 +47,7 @@ export function accountReducer(
     }
 
     case AccountActions.ActionTypes.DeleteAccountFailure: {
-      return Object.assign({}, state, {pending: false, error: true});
+      return Object.assign({}, state, {pending: false, error: action.payload});
     }
 
     case AccountActions.ActionTypes.SetCurrentAccountPending: {
@@ -59,7 +59,7 @@ export function accountReducer(
     }
 
     case AccountActions.ActionTypes.SetCurrentAccountFailure: {
-      return Object.assign({}, state, {pending: false, error: true});
+      return Object.assign({}, state, {pending: false, error: action.payload});
     }
 
     default: {
