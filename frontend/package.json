@@ -7,7 +7,7 @@
     "ng": "ng",
     "start": "ng serve --extra-webpack-config webpack.partial.js -o",
     "build": "ng build",
-    "test": "ng test",
+    "test": "ng test --extra-webpack-config webpack.partial.js",
     "lint": "ng lint",
     "electron": "electron .",
     "e2e": "ng e2e"
