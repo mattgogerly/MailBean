@@ -52,7 +52,7 @@ public class AccountControllerTest {
 
     @Before
     public void setUp() {
-        ConnectionSettings settings = new ConnectionSettings("test", "test", "test",
+        ConnectionSettings settings = new ConnectionSettings("test", "test",
                 "test", "test", "test", "test");
         account = new Account("123", "test", "test", "test", settings);
         Account accountTwo = new Account();

@@ -46,7 +46,7 @@ export class MessageEffects {
           () => new MessageActions.SyncServerSuccess()
         ),
         catchError(() => {
-          return of(new MessageActions.SyncServerFailure('Could not sync with the backend. Please restart the ' +
+          return of(new MessageActions.SyncServerFailure('Could not sync with the server. Please restart the ' +
             'client and try again.'));
         })
       );

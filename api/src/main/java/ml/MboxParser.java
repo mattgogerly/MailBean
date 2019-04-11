@@ -14,6 +14,8 @@ import java.util.Properties;
  */
 final class MboxParser {
 
+    private static Logger logger = LoggerFactory.getLogger(MboxParser.class);
+
     /**
      * Intentionally empty Constructor
      */
@@ -27,8 +29,6 @@ final class MboxParser {
      * @return An Array of Messages representing emails from the file
      */
     static Message[] readFromMboxFile(Path path) {
-        Logger logger = LoggerFactory.getLogger(Runner.class);
-
         Message[] emails = new Message[0]; // initialise array
         Properties props = new Properties();
         props.setProperty("mail.store.protocol", "mstor"); // using mstor implementation

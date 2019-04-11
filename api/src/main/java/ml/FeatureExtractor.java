@@ -35,7 +35,8 @@ public class FeatureExtractor {
     private Map<String, Object> values; // feature names mapped to their values
 
     /**
-     * Constructor for the FeatureSelector class
+     * Constructor for the FeatureSelector class.
+     *
      * @param msg The email message we're extracting features for
      */
     public FeatureExtractor(Message msg) {
@@ -95,7 +96,7 @@ public class FeatureExtractor {
     }
 
     /**
-     * Get the number of email attachments and put it under the numAttachments key
+     * Get the number of email attachments and put it under the numAttachments key.
      */
     private void getNumAttachments() {
         int count = 0;
@@ -139,7 +140,7 @@ public class FeatureExtractor {
     }
 
     /**
-     * Get the number of HTML links in a message and put it under the numLinks key
+     * Get the number of HTML links in a message and put it under the numLinks key.
      */
     private void getNumLinks() {
         // we only care about HTML <a href> tags, not raw links (see Fette et al)
@@ -150,7 +151,7 @@ public class FeatureExtractor {
 
     /**
      * Get the number of links where the text is "Click Here" and other known phishing phrases and put it under the
-     * numLinksClickHere key
+     * numLinksClickHere key.
      */
     private void getNumLinksClickHere() {
         String regex = "^(here|click|login|link|update)"; //  regex matches words we're looking for in links
@@ -159,7 +160,7 @@ public class FeatureExtractor {
     }
 
     /**
-     * Get the number of URLs that are IP addresses and put it under the numIpUrl key
+     * Get the number of URLs that are IP addresses and put it under the numIpUrl key.
      */
     private void getNumIpUrl() {
         // Regex from OWASP Validation Regex Repository
@@ -171,7 +172,7 @@ public class FeatureExtractor {
     }
 
     /**
-     * Get the number of links that end in file extensions and put it under the numLinksFileExt key
+     * Get the number of links that end in file extensions and put it under the numLinksFileExt key.
      * e.g. example.com/badfile.exe
      */
     private void getNumLinksFileExt() {
@@ -182,7 +183,7 @@ public class FeatureExtractor {
     }
 
     /**
-     * Check if the (HTML) email contains script tags and put it under the htmlJavascript key
+     * Check if the (HTML) email contains script tags and put it under the htmlJavascript key.
      */
     private void checkHtmlJavascript() {
         Elements scripts = this.body.select("script"); // get all JS script elements
@@ -190,7 +191,7 @@ public class FeatureExtractor {
     }
 
     /**
-     * Get the number of recipients and put it under the numRecipients key
+     * Get the number of recipients and put it under the numRecipients key.
      */
     private void getNumRecipients() {
         try {
@@ -207,7 +208,7 @@ public class FeatureExtractor {
     }
 
     /**
-     * Check if the body contains HTML and put it under the htmlBody key
+     * Check if the body contains HTML and put it under the htmlBody key.
      */
     private void checkHtmlBody() {
         List<String> htmlTags = Arrays.asList("html", "head", "body");
@@ -217,7 +218,7 @@ public class FeatureExtractor {
 
     /**
      * Get the number of links where the text doesn't match the href attribute and put it under the numLinksNonMatching key
-     * Only consider links where the text is actually a URL so ignore <a href="bla.com">Click Here!</a>
+     * Only consider links where the text is actually a URL so ignore <\a href="bla.com">Click Here!<\/a>.
      */
     private void getNumLinksNonMatching() {
         Elements links = this.body.select("a[href]");
@@ -239,7 +240,7 @@ public class FeatureExtractor {
     }
 
     /**
-     * Get the number of concatenated URLs and put it under the numConcatenatedUrls header
+     * Get the number of concatenated URLs and put it under the numConcatenatedUrls header.
      * A concatenated URL: https://www.google.co.uk/:http://badsite.com
      */
     private void getNumConcatenatedUrls() {
@@ -262,7 +263,7 @@ public class FeatureExtractor {
     }
 
     /**
-     * Get the similarity between the From and Sender headers and put it under the fromSenderSimilar key
+     * Get the similarity between the From and Sender headers and put it under the fromSenderSimilar key.
      */
     private void checkFromSenderSimilarity() {
         try {
@@ -278,7 +279,7 @@ public class FeatureExtractor {
     }
 
     /**
-     * Get the time between the email being sent and received in seconds, and put it under the spanTime header
+     * Get the time between the email being sent and received in seconds, and put it under the spanTime header.
      */
     private void getSpanTime() {
         try {
@@ -326,7 +327,7 @@ public class FeatureExtractor {
     }
 
     /**
-     * Get the number of unique domains in the body
+     * Get the number of unique domains in the body.
      */
     private void getNumUniqueDomains() {
         Set<String> domains = new HashSet<>(); // use a Set to remove duplicates
@@ -351,7 +352,7 @@ public class FeatureExtractor {
     }
 
     /**
-     * Get the number of shortened URLs and put it under the numShortenedUrls key
+     * Get the number of shortened URLs and put it under the numShortenedUrls key.
      */
     private void getNumUrlShortened() {
         // known shorteners
@@ -384,7 +385,7 @@ public class FeatureExtractor {
     }
 
     /**
-     * Check if the From header has a name and put result under fromNameExists key
+     * Check if the From header has a name and put result under fromNameExists key.
      */
     private void checkFromNameExist() {
         boolean namePresent = true;
@@ -407,7 +408,7 @@ public class FeatureExtractor {
     }
 
     /**
-     * Check if the From address has non-English characters and put it under fromNonEnglish key
+     * Check if the From address has non-English characters and put it under fromNonEnglish key.
      */
     private void checkFromNonEnglish() {
         boolean nonEnglish = false;
@@ -437,7 +438,7 @@ public class FeatureExtractor {
     }
 
     /**
-     * Get the maximum number of dots in any URI and put it under the maxDots key
+     * Get the maximum number of dots in any URI and put it under the maxDots key.
      */
     private void getMaximalDots() {
         Elements links = this.body.select("a[href]"); // get all <a href>
@@ -456,7 +457,7 @@ public class FeatureExtractor {
     }
 
     /**
-     * Get the number of CCed addresses from the headers and put it under the numCc key
+     * Get the number of CCed addresses from the headers and put it under the numCc key.
      */
     private void getNumCc() {
         int numCc;
@@ -470,7 +471,7 @@ public class FeatureExtractor {
     }
 
     /**
-     * Check if the From address is a no-reply and put result under noReply key
+     * Check if the From address is a no-reply and put result under noReply key.
      */
     private void checkNoReply() {
         boolean noReply = false;
@@ -505,7 +506,7 @@ public class FeatureExtractor {
     }
 
     /**
-     * Check if the Subject header exists and put it under the subjectExists key
+     * Check if the Subject header exists and put it under the subjectExists key.
      */
     private void checkSubjectExist() {
         try {
@@ -516,7 +517,7 @@ public class FeatureExtractor {
     }
 
     /**
-     * Get the length of the Subject header and put it under the subjectLength key
+     * Get the length of the Subject header and put it under the subjectLength key.
      */
     private void getSubjectLength() {
         int subjectLength;
@@ -531,7 +532,7 @@ public class FeatureExtractor {
     }
 
     /**
-     * Check if the Sender header is present in the email and put it under the senderExists key
+     * Check if the Sender header is present in the email and put it under the senderExists key.
      */
     private void checkSenderExist() {
         try {
@@ -543,7 +544,7 @@ public class FeatureExtractor {
     }
 
     /**
-     * Utility method to calculate the difference of two Strings
+     * Utility method to calculate the difference of two Strings.
      * Obtained from https://www.baeldung.com/java-levenshtein-distance
      * @param x First String
      * @param y Second String
@@ -571,6 +572,8 @@ public class FeatureExtractor {
 
 
     /**
+     * Get the cost of substituting a char for another char.
+     *
      * @param a Char to check
      * @param b Char to check
      * @return Cost of substituting: 1 if they don't match, 0 otherwise
@@ -580,6 +583,8 @@ public class FeatureExtractor {
     }
 
     /**
+     * Get the minimum of an array.
+     *
      * @param numbers An array of numbers
      * @return The minimum value in the Array (or MAX_VALUE if none)
      */
@@ -589,6 +594,8 @@ public class FeatureExtractor {
     }
 
     /**
+     * Count number of regex matches.
+     *
      * @param m The Matcher object we're using to count occurrences in a String.
      * @return The count of regex matches from the Matcher.
      */

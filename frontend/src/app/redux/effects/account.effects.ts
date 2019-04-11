@@ -2,7 +2,7 @@ import { Injectable } from '@angular/core';
 import { Actions, Effect, ofType } from '@ngrx/effects';
 import { AccountService } from '../services/account.service';
 import * as AccountActions from '../actions/account.actions';
-import { switchMap, map, catchError } from 'rxjs/operators';
+import {switchMap, map, catchError, flatMap} from 'rxjs/operators';
 import { Observable, of } from 'rxjs';
 import { Action } from '@ngrx/store';
 import {
@@ -11,6 +11,7 @@ import {
   GetAccountsSuccess,
   SetCurrentAccountPending
 } from '../actions/account.actions';
+import {EMPTY} from "rxjs/internal/observable/empty";
 
 @Injectable()
 export class AccountEffects {
@@ -35,12 +36,18 @@ export class AccountEffects {
   @Effect()
   getAccountsSuccess$: Observable<Action> = this.actions$.pipe(
     ofType<GetAccountsSuccess>(AccountActions.ActionTypes.GetAccountsSuccess),
-    map(action => {
+    flatMap(action => {
+      let account;
       if (action.payload.length > 0) {
-        return new AccountActions.SetCurrentAccountPending(action.payload[0].id);
+        account = action.payload[0].id;
       } else {
-        return new AccountActions.SetCurrentAccountFailure('Could not get account. Please restart the client and' +
-          'try again.');
+        account = null;
+      }
+
+      if (account != null) {
+        return of(new AccountActions.SetCurrentAccountPending(account));
+      } else {
+        return EMPTY;
       }
     })
   );

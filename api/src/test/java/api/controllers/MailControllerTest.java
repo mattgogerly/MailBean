@@ -60,7 +60,7 @@ public class MailControllerTest {
         Session session = Session.getInstance(props);
         store = new IMAPStore(session, null);
 
-        ConnectionSettings settings = new ConnectionSettings("test", "test", "test",
+        ConnectionSettings settings = new ConnectionSettings("test", "test",
                 "test", "test", "test", "test");
         account = new Account("123", "test", "test", "test", settings);
 

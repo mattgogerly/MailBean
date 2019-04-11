@@ -2,6 +2,8 @@ package api.services;
 
 import api.models.Account;
 import api.repositories.AccountRepository;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -14,6 +16,8 @@ import java.util.Optional;
  */
 @Service
 public class AccountService {
+
+    private Logger logger = LoggerFactory.getLogger(AccountService.class);
 
     private AccountRepository accountRepository;
 
@@ -53,6 +57,7 @@ public class AccountService {
      * @return The newly created Account.
      */
     public Account addAccount(Account newAccount) {
+        logger.info("Added new account " + newAccount.getEmail());
         return accountRepository.save(newAccount);
     }
 
@@ -62,6 +67,7 @@ public class AccountService {
      * @param id Id of the Account to be deleted.
      */
     public void deleteAccount(String id) {
+        logger.info("Deleted account with id " + id);
         accountRepository.deleteById(id);
     }
 }
