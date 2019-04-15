@@ -118,6 +118,7 @@ public class MailService {
             try {
                 password = accountAuthService.refreshOAuth(password);
             } catch (IOException e) {
+                logger.error(e.getMessage());
                 return null;
             }
 
@@ -167,16 +168,6 @@ public class MailService {
         List<DetailedMessage> messages = this.messageRepository.findAllByAccount_Id(id);
 
         return new LocalResponse(folders, messages);
-    }
-
-    /**
-     * Gets a message from the database by its UID.
-     *
-     * @param uid UID of the message
-     * @return DetailedMessage if it exists or otherwise null
-     */
-    public DetailedMessage getMessageByUid(Long uid) {
-        return this.messageRepository.findById(uid).orElse(null);
     }
 
     /**
