@@ -15,6 +15,10 @@ export class AccountService {
     return this.httpClient.get<Account[]>(environment.localApi + '/accounts');
   }
 
+  async testAccountConnection(account: Account, password: string) {
+    return this.httpClient.post<boolean>(environment.localApi + '/accounts/test/' + password, account);
+  }
+
   addAccount(account: Account) {
     return this.httpClient.post<Account>(environment.localApi + '/accounts', account);
   }

@@ -10,6 +10,7 @@ import { Router } from '@angular/router';
 export class OtherAuthComponent implements OnInit {
 
   public authStatus = 'pending';
+  public failure = false;
   public step = 1;
   public name: string;
   public email: string;
@@ -71,7 +72,7 @@ export class OtherAuthComponent implements OnInit {
         this.router.navigate(['/main']);
       }, 2000);
     } else {
-      this.router.navigate(['/auth/failure']);
+      this.authStatus = 'error';
     }
   }
 

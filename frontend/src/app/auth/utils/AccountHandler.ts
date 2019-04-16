@@ -6,6 +6,8 @@ import { Injectable } from '@angular/core';
 import { AppInjector} from '../../app-injector';
 import { Store } from '@ngrx/store';
 import { AddAccountPending } from '../../redux/actions/account.actions';
+import {AccountService} from "../../redux/services/account.service";
+import {environment} from "../../../environments/environment.prod";
 
 @Injectable()
 export class AccountHandler {
@@ -72,6 +74,13 @@ export class AccountHandler {
 
     const account = await this.constructAccountFromInfo(info, firstAttempt);
     if (account.connectionSettings.imapHost === undefined) {
+      return false;
+    }
+
+    const connectionSuccessful = await this.http
+      .post<boolean>(environment.localApi + '/accounts/test/' + password, account).toPromise();
+
+    if (!connectionSuccessful) {
       return false;
     }
 

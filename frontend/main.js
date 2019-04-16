@@ -3,10 +3,8 @@ const requestPromise = require('minimal-request-promise');
 const child_process = require('child_process');
 const kill = require('tree-kill');
 const path = require('path');
-const url = require('url');
 const keytar = require('keytar');
 const log = require('electron-log');
-const fixPath = require('fix-path');
 
 log.transports.file.level = 'info';
 log.transports.file.file = '/Users/mattgogerly/MailBean/log.log';
@@ -63,6 +61,7 @@ function createWindow(type) {
       }
     });
 
+    win.webContents.openDevTools();
     win.loadFile(path.join(filepath, '/dist/index.html'));
 
     if (loadingWin != null) {

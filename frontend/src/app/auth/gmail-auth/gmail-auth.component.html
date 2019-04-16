@@ -26,13 +26,15 @@
 
   <mat-card class="gmail-card" fxLayout="column" *ngIf="authStatus === 'error'">
     <mat-card-title>
-      Error
+      That didn't work
     </mat-card-title>
     <mat-card-subtitle>
       There seems to have been a problem getting permission to access your account.
     </mat-card-subtitle>
     <mat-card-content>
-      <button mat-stroked-button>Go back</button>
+      <i class="material-icons md-48">cross</i>
+
+      <button type="button" [routerLink]="'/auth'" mat-stroked-button>Try again</button>
     </mat-card-content>
   </mat-card>
 </div>

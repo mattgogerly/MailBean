@@ -5,20 +5,15 @@ import api.services.AccountAuthService;
 import api.services.AccountService;
 import api.services.MailService;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.sun.mail.imap.IMAPStore;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
-import org.mockito.Mock;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.http.MediaType;
 import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.test.web.servlet.MockMvc;
-
-import javax.mail.Session;
-import javax.mail.Store;
 
 import java.util.*;
 
@@ -46,44 +41,24 @@ public class MailControllerTest {
     @MockBean
     MailService mailService;
 
-    @Mock
-    private Store store;
-
-    private Account account;
-    private DetailedMessage message;
     private List<DetailedMessage> messages;
     private List<DetailedFolder> folders;
 
     @Before
     public void setUp() {
-        Properties props = new Properties();
-        Session session = Session.getInstance(props);
-        store = new IMAPStore(session, null);
-
         ConnectionSettings settings = new ConnectionSettings("test", "test",
                 "test", "test", "test", "test");
-        account = new Account("123", "test", "test", "test", settings);
+        Account account = new Account("123", "test", "test", "test", settings);
 
         DetailedFolder folder = new DetailedFolder("Test folder", 1, 0L, 1L, account);
         folders = new ArrayList<>();
         folders.add(folder);
 
-        message = new DetailedMessage(1L, 1, new ArrayList<>(), 0L, "Test sender",
-                new ArrayList<>(), new ArrayList<>(), "Test subject", false, false,
-                "Test content", folder);
+        DetailedMessage message = new DetailedMessage(1L, 1, new ArrayList<>(), 0L,
+                "Test sender", new ArrayList<>(), new ArrayList<>(), "Test subject", false,
+                false, "Test content", folder);
         messages = new ArrayList<>();
         messages.add(message);
-    }
-
-    @Test
-    public void checkConnection() throws Exception {
-        when(accountService.getAccountById("123")).thenReturn(account);
-        when(mailService.connect("123")).thenReturn(store);
-
-        this.mockMvc.perform(get("/imap/123/check"))
-                .andDo(print())
-                .andExpect(status().isOk())
-                .andExpect(content().string(containsString("true")));
     }
 
     @Test

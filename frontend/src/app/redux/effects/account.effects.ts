@@ -85,7 +85,7 @@ export class AccountEffects {
           () => new AccountActions.DeleteAccountSuccess(action.payload)
         ),
         catchError(() => {
-          return of(new AccountActions.DeleteAccountFailure('Could not delete account. Please restart the client' +
+          return of(new AccountActions.DeleteAccountFailure('Could not delete account. Please restart the client ' +
             'and try again.'));
         })
       );
@@ -101,7 +101,7 @@ export class AccountEffects {
             () => new AccountActions.SetCurrentAccountSuccess(action.payload)
           ),
           catchError(() => {
-            return of(new AccountActions.SetCurrentAccountFailure('Could not set current account. Please restart' +
+            return of(new AccountActions.SetCurrentAccountFailure('Could not set current account. Please restart ' +
               'the client and try again.'));
           })
         );

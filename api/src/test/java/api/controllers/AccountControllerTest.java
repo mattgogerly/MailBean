@@ -6,9 +6,11 @@ import api.services.AccountAuthService;
 import api.services.AccountService;
 import api.services.MailService;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.sun.mail.imap.IMAPStore;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
+import org.mockito.Mock;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
@@ -16,10 +18,9 @@ import org.springframework.http.MediaType;
 import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.test.web.servlet.MockMvc;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import javax.mail.Session;
+import javax.mail.Store;
+import java.util.*;
 
 import static org.hamcrest.Matchers.containsString;
 import static org.mockito.ArgumentMatchers.any;
@@ -47,6 +48,9 @@ public class AccountControllerTest {
     @MockBean
     MailService mailService;
 
+    @Mock
+    private Store store;
+
     private Account account;
     private List<Account> accounts;
 
@@ -60,6 +64,10 @@ public class AccountControllerTest {
         accounts = new ArrayList<>();
         accounts.add(account);
         accounts.add(accountTwo);
+
+        Properties props = new Properties();
+        Session session = Session.getInstance(props);
+        store = new IMAPStore(session, null);
     }
 
     @Test
@@ -69,6 +77,20 @@ public class AccountControllerTest {
                 .andDo(print())
                 .andExpect(status().isOk())
                 .andExpect(content().string(containsString("123")));
+    }
+
+    @Test
+    public void checkConnection() throws Exception {
+        when(accountService.getAccountById("123")).thenReturn(account);
+        when(mailService.connect("123")).thenReturn(store);
+
+        this.mockMvc.perform(post("/accounts/test/password123")
+                    .content(asJsonString(account))
+                    .contentType(MediaType.APPLICATION_JSON)
+                    .characterEncoding("utf-8"))
+                .andDo(print())
+                .andExpect(status().isOk())
+                .andExpect(content().string(containsString("true")));
     }
 
     @Test

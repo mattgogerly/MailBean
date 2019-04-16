@@ -48,9 +48,24 @@ public class AccountController {
     }
 
     /**
-     * Add a new Account.
+     * Test that we can connect to an Account using the provided details.
+     */
+    @PostMapping("/accounts/test/{password}")
+    public boolean testAccount(@RequestBody Account account, @PathVariable(name = "password") String password) {
+        this.accountService.addAccount(account);
+        this.accountAuthService.addAccount(account.getId(), password);
+
+        boolean successful = this.mailService.connect(account.getId()) != null;
+
+        this.accountService.deleteAccount(account.getId());
+        this.accountAuthService.deleteAccount(account.getId());
+
+        return successful;
+    }
+
+    /**
+     * Add a new Account and store it in the database.
      *
-     * Add a new Account and store it in the database
      * @param newAccount The new Account to be added
      * @return The newly created Account
      */

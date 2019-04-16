@@ -27,17 +27,6 @@ public class MailController {
     }
 
     /**
-     * Check whether the authentication details provided enable us to actually connect to the account
-     *
-     * @param id Id of the Account
-     * @return True if connection was successful, false otherwise
-     */
-    @GetMapping("/imap/{account}/check")
-    public boolean checkConnection(@PathVariable(name = "account") String id) {
-        return mailService.connect(id) != null;
-    }
-
-    /**
      * Gets folders and messages store in the local database for a given Account.
      *
      * @param account Id of the Account
