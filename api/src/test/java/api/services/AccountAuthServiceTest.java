@@ -62,7 +62,7 @@ public class AccountAuthServiceTest {
 
     @Test
     public void getPassword() {
-        assertEquals(accountAuthService.getPassword("Test"), "Test password");
+        assertEquals("Test password", accountAuthService.getPassword("Test"));
     }
 
     @Test

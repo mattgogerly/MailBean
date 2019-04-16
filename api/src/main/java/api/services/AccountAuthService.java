@@ -58,10 +58,10 @@ public class AccountAuthService {
     }
 
     /**
-     * Gets the password or token for an Account.
+     * Gets the password or refresh token for an Account.
      *
      * @param key Id of the Account
-     * @return Password or token, or null if it has not been added
+     * @return Password or refresh token, or null if it has not been added
      */
     String getPassword(String key) {
         return authStorage.get(key);

@@ -154,7 +154,7 @@ public class FeatureExtractor {
      * numLinksClickHere key.
      */
     private void getNumLinksClickHere() {
-        String regex = "^(here|click|login|link|update)"; //  regex matches words we're looking for in links
+        String regex = "(?i)^(here|click|login|link|update)"; //  regex matches words we're looking for in links
         Elements links = this.body.select("a[href]:matches(" + regex + ")"); //  get <a href> that contains regex
         this.values.put("numLinksClickHere", links.size());
     }
@@ -176,10 +176,9 @@ public class FeatureExtractor {
      * e.g. example.com/badfile.exe
      */
     private void getNumLinksFileExt() {
-        Pattern p = Pattern.compile("\\.\\w{3,4}($|\\?)"); // matches .aaa or .bbbb
-        Matcher m = p.matcher(this.emailBody);
-
-        this.values.put("numLinksFileExt", countRegexMatches(m));
+        String regex = "(?:\\/[a-z\\d]+)+\\.\\w{3,4}($|\\?)";
+        Elements links = this.body.select("a[href~=" + regex + "]");
+        this.values.put("numLinksFileExt", links.size());
     }
 
     /**
@@ -337,9 +336,12 @@ public class FeatureExtractor {
         for (Element l : links) {
             try {
                 String href = l.attr("href").trim(); // remove any whitespace
+                if (!href.contains("http://") || !href.contains("https://")) {
+                    href = "http://" + href;
+                }
+
                 URI uri = new URI(href); // parse as a URI
                 String domain = uri.getHost(); // get the host (e.g. @domain.com)
-
                 domains.add(domain); // add domain to the set
             } catch (URISyntaxException e) {
                 count++;
@@ -369,7 +371,7 @@ public class FeatureExtractor {
             }
         }
 
-        this.values.put("numShortenedUrls", count);
+        this.values.put("numUrlShortened", count);
     }
 
     /**
@@ -453,7 +455,7 @@ public class FeatureExtractor {
             }
         }
 
-        this.values.put("maxDots", maxDots);
+        this.values.put("maximalDots", maxDots);
     }
 
     /**

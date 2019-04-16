@@ -3,6 +3,7 @@ package api.services;
 import api.models.Account;
 import api.models.ConnectionSettings;
 import api.repositories.AccountRepository;
+import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -47,6 +48,11 @@ public class AccountServiceTest {
         allAccounts.add(account);
     }
 
+    @After
+    public void tearDown() {
+        accountRepository.deleteAll();
+    }
+
     @Test
     public void getAllAccounts() {
         when(accountRepository.findAll()).thenReturn(allAccounts);
@@ -60,7 +66,7 @@ public class AccountServiceTest {
             count++;
         }
 
-        assertEquals(count, allAccounts.size());
+        assertEquals(allAccounts.size(), count);
     }
 
     @Test
@@ -68,7 +74,7 @@ public class AccountServiceTest {
         when(accountRepository.findById(any(String.class))).thenReturn(Optional.of(account));
 
         Account result = accountService.getAccountById("Test");
-        assertEquals(result.getEmail(), account.getEmail());
+        assertEquals(account.getEmail(), result.getEmail());
     }
 
     @Test
@@ -76,7 +82,7 @@ public class AccountServiceTest {
         when(accountRepository.save(any(Account.class))).thenReturn(account);
 
         Account result = accountService.addAccount(account);
-        assertEquals(result.getEmail(), account.getEmail());
+        assertEquals(account.getEmail(), result.getEmail());
     }
 
     @Test

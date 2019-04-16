@@ -18,6 +18,8 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.ClassPathResource;
 import org.springframework.stereotype.Service;
+import org.springframework.util.FileCopyUtils;
+import org.springframework.util.SerializationUtils;
 import utils.MessageContentUtils;
 
 import javax.mail.*;
@@ -25,6 +27,7 @@ import javax.mail.internet.InternetAddress;
 import javax.mail.internet.MimeMessage;
 import java.io.File;
 import java.io.IOException;
+import java.io.InputStream;
 import java.io.UnsupportedEncodingException;
 import java.util.*;
 import java.util.concurrent.atomic.AtomicBoolean;
@@ -72,12 +75,14 @@ public class MailService {
 
         try {
             // try and load both the classifier and the normaliser
-            File classifier = new ClassPathResource("classifier", this.getClass().getClassLoader()).getFile();
-            this.classifier = (BasicNetwork) SerializeObject.load(classifier);
+            ClassPathResource classifier = new ClassPathResource("classifier", this.getClass().getClassLoader());
+            byte[] cData = FileCopyUtils.copyToByteArray(classifier.getInputStream());
+            this.classifier = (BasicNetwork) SerializationUtils.deserialize(cData);
 
-            File normaliser = new ClassPathResource("normaliser", this.getClass().getClassLoader()).getFile();
-            this.normHelper = (NormalizationHelper) SerializeObject.load(normaliser);
-        } catch (IOException | ClassNotFoundException e) {
+            ClassPathResource normaliser = new ClassPathResource("normaliser", this.getClass().getClassLoader());
+            byte[] nData = FileCopyUtils.copyToByteArray(normaliser.getInputStream());
+            this.normHelper = (NormalizationHelper) SerializationUtils.deserialize(nData);
+        } catch (IOException e) {
             // if either is missing we can't continue, so exit
             logger.error("Failed to load classifier or normaliser, exiting...");
             Encog.getInstance().shutdown();
@@ -231,7 +236,7 @@ public class MailService {
                     this.folderRepository.save(df);
                 }
             }
-        } catch (Exception e) {
+        } catch (MessagingException e) {
             logger.error(e.getMessage());
             return false;
         }
@@ -266,12 +271,6 @@ public class MailService {
         dfs.stream().parallel().forEach(df -> {
             try {
                 Folder f = store.getFolder(df.getName());
-
-                if (f == null) {
-                    // folder deleted so remove it
-                    this.folderRepository.delete(df);
-                    return;
-                }
 
                 f.open(Folder.READ_ONLY);
                 UIDFolder uf = (UIDFolder) f;
@@ -339,6 +338,7 @@ public class MailService {
                 // close the folder or the server complains
                 f.close();
             } catch (MessagingException e) {
+                this.folderRepository.delete(df); // folder doesn't exist so delete it
                 logger.error(e.getMessage());
             }
         });
@@ -594,6 +594,7 @@ public class MailService {
             DetailedMessage msg = getLocalMessage(accountId, uid);
             this.messageRepository.delete(msg);
         } catch (MessagingException e) {
+            // we should never actually reach here but we need it or the compiler complains
             logger.error(e.getMessage());
             return false;
         }
@@ -624,6 +625,7 @@ public class MailService {
             folder.setUnread(folder.getUnread() - 1);
             this.folderRepository.save(folder);
         } catch (MessagingException e) {
+            // we should never actually reach here but we need it or the compiler complains
             logger.error(e.getMessage());
             return false;
         }
@@ -662,6 +664,7 @@ public class MailService {
                 try {
                     message.addRecipient(Message.RecipientType.TO, new InternetAddress(t));
                 } catch (MessagingException e) {
+                    // should never be called but compiler complains
                     logger.error(e.getMessage());
                     throw new BadRequestException();
                 }
@@ -672,6 +675,7 @@ public class MailService {
                 try {
                     message.addRecipient(Message.RecipientType.CC, new InternetAddress(t));
                 } catch (MessagingException e) {
+                    // should never be called but compiler complains
                     logger.error(e.getMessage());
                     throw new BadRequestException();
                 }
@@ -680,14 +684,17 @@ public class MailService {
             message.setSubject(info.getSubject());
             message.setContent(info.getContent(), "text/html");
 
-            // get the password or token
-            String password = this.accountAuthService.getPassword(account.getId());
+            // get the password (refresh access token if necessary)
+            String password = this.accountAuthService.getPassword(accountId);
+            if (account.getProvider().equals("gmail.com")) {
+                password = this.accountAuthService.refreshOAuth(password);
+            }
 
             // send the message
             Transport.send(message, account.getEmail(), password);
-        } catch (MessagingException e) {
+        } catch (IOException | MessagingException e) {
             logger.error(e.getMessage());
-            return false;
+            throw new BadRequestException();
         }
 
         logger.info("Message sent successfully");
@@ -723,7 +730,12 @@ public class MailService {
             UIDFolder uf = (UIDFolder) f;
             f.open(Folder.READ_WRITE);
 
-            return uf.getMessageByUID(msg.getUid());
+            Message m = uf.getMessageByUID(msg.getUid());
+            if (m == null) {
+                throw new MessagingException("Message does not exist");
+            }
+
+            return m;
         } catch (MessagingException e) {
             logger.warn("Message does not exist");
             throw new ResourceNotFoundException();
