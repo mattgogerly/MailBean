@@ -3,7 +3,7 @@ import {select, Store} from '@ngrx/store';
 import { GetAccountsPending } from './redux/actions/account.actions';
 import { Observable } from 'rxjs';
 import { AccountStore } from './redux/interfaces/account-store.interface';
-import { Router } from '@angular/router';
+import {ActivatedRoute, Router} from '@angular/router';
 import {MatSnackBar} from "@angular/material";
 
 @Component({

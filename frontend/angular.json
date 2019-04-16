@@ -3,7 +3,7 @@
   "version": 1,
   "newProjectRoot": "projects",
   "projects": {
-    "frontend": {
+    "MailBean": {
       "root": "",
       "sourceRoot": "src",
       "projectType": "application",
@@ -105,7 +105,7 @@
         }
       }
     },
-    "frontend-e2e": {
+    "MailBean-e2e": {
       "root": "e2e/",
       "projectType": "application",
       "architect": {
@@ -133,7 +133,7 @@
       }
     }
   },
-  "defaultProject": "frontend",
+  "defaultProject": "MailBean",
   "schematics": {
     "@schematics/angular:component": {
       "styleext": "scss"
