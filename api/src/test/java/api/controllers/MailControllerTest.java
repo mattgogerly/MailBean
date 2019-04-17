@@ -54,7 +54,8 @@ public class MailControllerTest {
         folders = new ArrayList<>();
         folders.add(folder);
 
-        DetailedMessage message = new DetailedMessage(1L, 1, new ArrayList<>(), 0L,
+        MessageId id = new MessageId(1L);
+        DetailedMessage message = new DetailedMessage(id, 1, new ArrayList<>(), 0L,
                 "Test sender", new ArrayList<>(), new ArrayList<>(), "Test subject", false,
                 false, "Test content", folder);
         messages = new ArrayList<>();
@@ -116,7 +117,7 @@ public class MailControllerTest {
     public void sendMessage() throws Exception {
         when(mailService.sendMessage(any(String.class), any(NewMessageInfo.class))).thenReturn(true);
 
-        NewMessageInfo info = new NewMessageInfo(new ArrayList<>(), new ArrayList<>(), "Test subject",
+        NewMessageInfo info = new NewMessageInfo(new ArrayList<>(), new ArrayList<>(), new ArrayList<>(), "Test subject",
                 "Test content", false, false, 0L);
 
         this.mockMvc.perform(post("/smtp/123")

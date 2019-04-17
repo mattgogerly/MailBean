@@ -12,7 +12,6 @@ import org.encog.Encog;
 import org.encog.ml.data.MLData;
 import org.encog.ml.data.versatile.NormalizationHelper;
 import org.encog.neural.networks.BasicNetwork;
-import org.encog.util.obj.SerializeObject;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -25,9 +24,7 @@ import utils.MessageContentUtils;
 import javax.mail.*;
 import javax.mail.internet.InternetAddress;
 import javax.mail.internet.MimeMessage;
-import java.io.File;
 import java.io.IOException;
-import java.io.InputStream;
 import java.io.UnsupportedEncodingException;
 import java.util.*;
 import java.util.concurrent.atomic.AtomicBoolean;
@@ -405,13 +402,13 @@ public class MailService {
         // if we've processed new messages
         if (detailedMessages.size() > 0) {
             // if our new oldest UID is older than the previous oldest then update the folder
-            if (df.getOldestUid() > detailedMessages.get(0).getUid()) {
-                df.setOldestUid(detailedMessages.get(0).getUid());
+            if (df.getOldestUid() > detailedMessages.get(0).getId().getUid()) {
+                df.setOldestUid(detailedMessages.get(0).getId().getUid());
             }
 
             // if our newest UID is newer than the previous newest then update the folder
-            if (df.getLatestUid() < detailedMessages.get(detailedMessages.size() - 1).getUid()) {
-                df.setLatestUid(detailedMessages.get(detailedMessages.size() - 1).getUid());
+            if (df.getLatestUid() < detailedMessages.get(detailedMessages.size() - 1).getId().getUid()) {
+                df.setLatestUid(detailedMessages.get(detailedMessages.size() - 1).getId().getUid());
             }
         }
 
@@ -504,7 +501,8 @@ public class MailService {
         }
 
         // create a new DetailedMessage with the info
-        DetailedMessage d = new DetailedMessage(messageUid, messageNumber, headers, received, sender, to, cc, subject,
+        MessageId id = new MessageId(messageUid);
+        DetailedMessage d = new DetailedMessage(id, messageNumber, headers, received, sender, to, cc, subject,
                 seen, phishing, content, df);
         d.setAccount(account);
         return d;
@@ -531,7 +529,7 @@ public class MailService {
         }
 
         // get the first (oldest) UID
-        Long firstUid = knownMessages.get(0).getUid();
+        Long firstUid = knownMessages.get(0).getId().getUid();
 
         boolean successful = true;
         try {
@@ -681,6 +679,17 @@ public class MailService {
                 }
             });
 
+            // add all BCC recipients
+            info.getBcc().forEach(t -> {
+                try {
+                    message.addRecipient(Message.RecipientType.BCC, new InternetAddress(t));
+                } catch (MessagingException e) {
+                    // should never be called but compiler complains
+                    logger.error(e.getMessage());
+                    throw new BadRequestException();
+                }
+            });
+
             message.setSubject(info.getSubject());
             message.setContent(info.getContent(), "text/html");
 
@@ -730,7 +739,7 @@ public class MailService {
             UIDFolder uf = (UIDFolder) f;
             f.open(Folder.READ_WRITE);
 
-            Message m = uf.getMessageByUID(msg.getUid());
+            Message m = uf.getMessageByUID(msg.getId().getUid());
             if (m == null) {
                 throw new MessagingException("Message does not exist");
             }
@@ -752,7 +761,7 @@ public class MailService {
      */
     private DetailedMessage getLocalMessage(String accountId, Long uid) {
         DetailedMessage msg = this.messageRepository.findAllByAccount_Id(accountId).stream()
-                .filter(m -> m.getUid().equals(uid))
+                .filter(m -> m.getId().getUid().equals(uid))
                 .findFirst()
                 .orElse(null);
 

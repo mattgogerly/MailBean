@@ -16,6 +16,7 @@ public class NewMessageInfo {
 
     private List<String> to;
     private List<String> cc;
+    private List<String> bcc;
     private String subject;
     private String content;
     private Boolean reply;
@@ -40,10 +41,11 @@ public class NewMessageInfo {
      * @param replyAll Whether the message is reply all
      * @param replyTo The UID of the message being replied to
      */
-    public NewMessageInfo(List<String> to, List<String> cc, String subject, String content, Boolean reply,
-                          Boolean replyAll, Long replyTo) {
+    public NewMessageInfo(List<String> to, List<String> cc, List<String> bcc, String subject, String content,
+                          Boolean reply, Boolean replyAll, Long replyTo) {
         this.to = to;
         this.cc = cc;
+        this.bcc = bcc;
         this.subject = subject;
         this.content = content;
         this.reply = reply;

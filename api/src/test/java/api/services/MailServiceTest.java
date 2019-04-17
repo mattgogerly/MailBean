@@ -68,12 +68,14 @@ public class MailServiceTest {
         allFolders.add(folder);
         allFolders.add(folderTwo);
 
-        message = new DetailedMessage(1L, 1, new ArrayList<>(), 0L, "Test sender",
+        MessageId id = new MessageId(1L);
+        message = new DetailedMessage(id, 1, new ArrayList<>(), 0L, "Test sender",
                 new ArrayList<>(), new ArrayList<>(), "Test subject", false, false,
                 "Test content", folder);
         message.setAccount(gmailAccount);
 
-        DetailedMessage messageNotExist = new DetailedMessage(100L, 1, new ArrayList<>(), 0L,
+        MessageId notExist = new MessageId(100L);
+        DetailedMessage messageNotExist = new DetailedMessage(notExist, 1, new ArrayList<>(), 0L,
                 "Test sender", new ArrayList<>(), new ArrayList<>(), "Test subject", false, false,
                 "Test content", folder);
         messageNotExist.setAccount(gmailAccount);
@@ -231,7 +233,11 @@ public class MailServiceTest {
 
         List<String> cc = new ArrayList<>();
         cc.add("mg11g16.soton@gmail.com");
-        NewMessageInfo info = new NewMessageInfo(to, cc, "Test email", "This is a test", false,
+
+        List<String> bcc = new ArrayList<>();
+        bcc.add("mg11g16.soton@gmail.com");
+
+        NewMessageInfo info = new NewMessageInfo(to, cc, bcc, "Test email", "This is a test", false,
                 false, -1L);
 
         assertTrue(mailService.sendMessage("123", info));
@@ -257,7 +263,11 @@ public class MailServiceTest {
 
         List<String> cc = new ArrayList<>();
         cc.add("mg11g16.soton!/asgmail.com");
-        NewMessageInfo info = new NewMessageInfo(to, cc, "Test email", "This is a test", false,
+
+        List<String> bcc = new ArrayList<>();
+        bcc.add("mg11g16.soton@gmail.com");
+
+        NewMessageInfo info = new NewMessageInfo(to, cc, bcc, "Test email", "This is a test", false,
                 false, -1L);
 
         mailService.sendMessage("123", info);
@@ -278,7 +288,11 @@ public class MailServiceTest {
 
         List<String> cc = new ArrayList<>();
         cc.add("mg11g16.soton@gmail.com");
-        NewMessageInfo info = new NewMessageInfo(to, cc, "Test email", "This is a test", false,
+
+        List<String> bcc = new ArrayList<>();
+        bcc.add("mg11g16.soton@gmail.com");
+
+        NewMessageInfo info = new NewMessageInfo(to, cc, bcc, "Test email", "This is a test", false,
                 false, -1L);
 
         mailService.sendMessage("123", info);

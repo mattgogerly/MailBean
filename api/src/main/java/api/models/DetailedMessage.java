@@ -24,9 +24,9 @@ import java.util.ArrayList;
 @Setter
 public class DetailedMessage implements Serializable {
 
-    @Id
-    @Column(name = "uid")
-    private Long uid;
+    @EmbeddedId
+    @Column(name = "id")
+    private MessageId id;
 
     @ManyToOne(fetch = FetchType.LAZY, optional = false)
     @JoinColumn(name = "account_id", nullable = false)
@@ -85,7 +85,7 @@ public class DetailedMessage implements Serializable {
     /**
      * Create a new DetailedMessage object
      *
-     * @param uid UID of the message
+     * @param id UID of the message
      * @param messageNum Message number from IMAP
      * @param headers Headers of the message
      * @param received Received date as UNIX timestamp
@@ -98,10 +98,10 @@ public class DetailedMessage implements Serializable {
      * @param content The content of the message
      * @param folder The folder the message belongs to
      */
-    public DetailedMessage(Long uid, Integer messageNum, ArrayList<SerializableHeader> headers, Long received,
+    public DetailedMessage(MessageId id, Integer messageNum, ArrayList<SerializableHeader> headers, Long received,
                            String sender, ArrayList<String> to, ArrayList<String> cc, String subject, Boolean seen,
                            Boolean phishing, String content, DetailedFolder folder) {
-        this.uid = uid;
+        this.id = id;
         this.messageNum = messageNum;
         this.headers = headers;
         this.received = received;
