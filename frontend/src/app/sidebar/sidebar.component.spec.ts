@@ -28,5 +28,5 @@ describe('SidebarComponent', () => {
   it('should have a title of Folder', () => {
     const compiled = fixture.debugElement.nativeElement;
     expect(compiled.querySelector('h2').textContent).toContain('Folders');
-  })
+  });
 });

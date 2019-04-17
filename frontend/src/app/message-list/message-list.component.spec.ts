@@ -28,5 +28,5 @@ describe('MessageListComponent', () => {
   it('should have controls and search bar', () => {
     const compiled = fixture.debugElement.nativeElement;
     expect(compiled.querySelector('.list-controls').children.length).toEqual(2);
-  })
+  });
 });

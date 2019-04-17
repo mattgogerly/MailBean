@@ -36,5 +36,5 @@ describe('AuthComponent', () => {
 
     const compiled = fixture.debugElement.nativeElement;
     expect(compiled.querySelector('button')).toBeTruthy();
-  })
+  });
 });

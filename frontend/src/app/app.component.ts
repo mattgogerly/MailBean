@@ -1,10 +1,10 @@
 import { Component, OnInit } from '@angular/core';
-import {select, Store} from '@ngrx/store';
+import { select, Store } from '@ngrx/store';
 import { GetAccountsPending } from './redux/actions/account.actions';
 import { Observable } from 'rxjs';
 import { AccountStore } from './redux/interfaces/account-store.interface';
-import {ActivatedRoute, Router} from '@angular/router';
-import {MatSnackBar} from "@angular/material";
+import { Router } from '@angular/router';
+import { MatSnackBar } from '@angular/material';
 
 @Component({
   selector: 'app-root',

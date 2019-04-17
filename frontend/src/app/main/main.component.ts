@@ -2,7 +2,6 @@ import { Component, OnInit, ViewChild } from '@angular/core';
 import { select, Store } from '@ngrx/store';
 import { take } from 'rxjs/operators';
 import { MessageListComponent } from '../message-list/message-list.component';
-import {MatSnackBar} from "@angular/material";
 
 @Component({
   selector: 'app-main',

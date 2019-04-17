@@ -1,7 +1,7 @@
 import { Action } from '@ngrx/store';
 import { LocalResponse } from '../models/local-response';
 import { DetailedMessage } from '../models/detailed-message';
-import {NewMessageInfo} from "../models/new-message-info";
+import { NewMessageInfo } from '../models/new-message-info';
 
 export enum ActionTypes {
   GetLocalPending = '[Messages] Get Local Pending',

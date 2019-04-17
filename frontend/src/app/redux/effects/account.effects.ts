@@ -11,7 +11,7 @@ import {
   GetAccountsSuccess,
   SetCurrentAccountPending
 } from '../actions/account.actions';
-import {EMPTY} from "rxjs/internal/observable/empty";
+import {EMPTY} from 'rxjs/internal/observable/empty';
 
 @Injectable()
 export class AccountEffects {

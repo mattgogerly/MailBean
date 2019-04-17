@@ -1,7 +1,8 @@
 /**
- * https://stackoverflow.com/a/40613468/
+ * Taken from https://stackoverflow.com/a/40613468/
  */
 
+/* tslint:disable */
 import { Directive } from '@angular/core';
 
 @Directive({
