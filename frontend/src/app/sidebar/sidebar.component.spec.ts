@@ -1,6 +1,6 @@
 import { async, ComponentFixture, TestBed } from '@angular/core/testing';
-
 import { SidebarComponent } from './sidebar.component';
+import { AppModule } from '../app.module';
 
 describe('SidebarComponent', () => {
   let component: SidebarComponent;
@@ -8,7 +8,9 @@ describe('SidebarComponent', () => {
 
   beforeEach(async(() => {
     TestBed.configureTestingModule({
-      declarations: [ SidebarComponent ]
+      imports: [
+        AppModule
+      ]
     })
     .compileComponents();
   }));
@@ -22,4 +24,9 @@ describe('SidebarComponent', () => {
   it('should create', () => {
     expect(component).toBeTruthy();
   });
+
+  it('should have a title of Folder', () => {
+    const compiled = fixture.debugElement.nativeElement;
+    expect(compiled.querySelector('h2').textContent).toContain('Folders');
+  })
 });

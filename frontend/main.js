@@ -6,8 +6,10 @@ const path = require('path');
 const keytar = require('keytar');
 const log = require('electron-log');
 
+const home = require("os").homedir();
+const logPath = path.join(home, 'MailBean/application.log');
 log.transports.file.level = 'info';
-log.transports.file.file = '/Users/mattgogerly/MailBean/log.log';
+log.transports.file.file = logPath;
 
 const platform = process.platform;
 const apiUrl = 'http://localhost:36024/accounts';
@@ -34,6 +36,16 @@ try {
   }
 } catch (err) {
   log.error(err.toString());
+  serverProcess = null;
+}
+
+function killServer() {
+  if (serverProcess != null) {
+    kill(serverProcess.pid, 'SIGTERM', function () {
+      log.info('API process killed');
+      serverProcess = null;
+    });
+  }
 }
 
 serverProcess.stdout.on('data', data => {
@@ -55,7 +67,8 @@ function createWindow(type) {
   if (type === 'main') {
     win = new BrowserWindow({
       width: 800,
-      height: 600,
+      height: 700,
+      center: true,
       webPreferences: {
         nodeIntegration: true
       }
@@ -70,12 +83,13 @@ function createWindow(type) {
     }
 
     win.on('closed', () => {
+      killServer();
       win = null;
     });
   } else if (type === 'loading') {
     loadingWin = new BrowserWindow({
-      width: 600,
-      height: 400,
+      width: 500,
+      height: 300,
       frame: false,
       center: true,
       resizable: false,
@@ -109,21 +123,19 @@ app.on('ready', function() {
 });
 
 app.on('window-all-closed', () => {
-  if (serverProcess) {
-    kill(serverProcess.pid, 'SIGTERM', function () {
-      log.info('API process killed, exiting..');
-      serverProcess = null;
-      app.quit();
-    });
-  } else {
-    app.quit();
-  }
+  killServer();
 });
 
-app.on('activate', () => {
-  if (win === null) {
-    createWindow();
-  }
+app.on('will-quit', () => {
+  killServer();
+});
+
+process.on('exit', () => {
+  killServer();
+});
+
+process.on('SIGINT', () => {
+  killServer();
 });
 
 ipcMain.on('get-password', (event, id) => {

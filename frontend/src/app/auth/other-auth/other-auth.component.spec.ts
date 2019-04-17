@@ -1,6 +1,7 @@
 import { async, ComponentFixture, TestBed } from '@angular/core/testing';
 
 import { OtherAuthComponent } from './other-auth.component';
+import { AppModule } from '../../app.module';
 
 describe('OtherAuthComponent', () => {
   let component: OtherAuthComponent;
@@ -8,7 +9,9 @@ describe('OtherAuthComponent', () => {
 
   beforeEach(async(() => {
     TestBed.configureTestingModule({
-      declarations: [ OtherAuthComponent ]
+      imports: [
+        AppModule
+      ]
     })
     .compileComponents();
   }));

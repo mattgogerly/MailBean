@@ -1,6 +1,6 @@
 import { async, ComponentFixture, TestBed } from '@angular/core/testing';
-
 import { MessageListComponent } from './message-list.component';
+import { AppModule } from '../app.module';
 
 describe('MessageListComponent', () => {
   let component: MessageListComponent;
@@ -8,7 +8,9 @@ describe('MessageListComponent', () => {
 
   beforeEach(async(() => {
     TestBed.configureTestingModule({
-      declarations: [ MessageListComponent ]
+      imports: [
+        AppModule
+      ]
     })
     .compileComponents();
   }));
@@ -22,4 +24,9 @@ describe('MessageListComponent', () => {
   it('should create', () => {
     expect(component).toBeTruthy();
   });
+
+  it('should have controls and search bar', () => {
+    const compiled = fixture.debugElement.nativeElement;
+    expect(compiled.querySelector('.list-controls').children.length).toEqual(2);
+  })
 });

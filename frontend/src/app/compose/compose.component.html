@@ -27,6 +27,19 @@
   </mat-form-field>
 
   <mat-form-field class="compose-field">
+    <mat-chip-list #bccChips aria-label="bcc">
+      <mat-chip *ngFor="let recipient of bcc" [removable]="true" (removed)="remove(recipient, 'bcc')">
+        {{recipient}}
+        <i class="material-icons" matChipRemove>cancel</i>
+      </mat-chip>
+      <input placeholder="Add BCC"
+             [matChipInputFor]="bccChips"
+             [matChipInputAddOnBlur]="true"
+             (matChipInputTokenEnd)="add($event, 'bcc')">
+    </mat-chip-list>
+  </mat-form-field>
+
+  <mat-form-field class="compose-field">
     <input matInput [(ngModel)]="subject" name="subject" placeholder="Subject">
   </mat-form-field>
 

@@ -15,6 +15,7 @@ export class ComposeComponent implements OnInit {
 
   @Input() to: string[];
   @Input() cc: string[];
+  bcc: string[] = [];
   @Input() subject: string;
   @Input() content: string;
   @Input() reply: boolean;
@@ -40,6 +41,8 @@ export class ComposeComponent implements OnInit {
         this.to.push(value.trim());
       } else if (type === 'cc') {
         this.cc.push(value.trim());
+      } else if (type === 'bcc') {
+        this.bcc.push(value.trim());
       }
     }
 
@@ -61,6 +64,12 @@ export class ComposeComponent implements OnInit {
       if (index >= 0) {
         this.cc.splice(index, 1);
       }
+    } else if (type === 'bcc') {
+      const index = this.bcc.indexOf(recipient);
+
+      if (index >= 0) {
+        this.bcc.splice(index, 1);
+      }
     }
   }
 
@@ -68,6 +77,7 @@ export class ComposeComponent implements OnInit {
     const info = new NewMessageInfo();
     info.to = this.to;
     info.cc = this.cc;
+    info.bcc = this.bcc;
     info.subject = this.subject;
     info.content = this.content;
     info.reply = this.reply;

@@ -1,6 +1,7 @@
 import { async, ComponentFixture, TestBed } from '@angular/core/testing';
 
 import { GmailAuthComponent } from './gmail-auth.component';
+import { AppModule } from '../../app.module';
 
 describe('GmailAuthComponent', () => {
   let component: GmailAuthComponent;
@@ -8,7 +9,9 @@ describe('GmailAuthComponent', () => {
 
   beforeEach(async(() => {
     TestBed.configureTestingModule({
-      declarations: [ GmailAuthComponent ]
+      imports: [
+        AppModule
+      ]
     })
     .compileComponents();
   }));

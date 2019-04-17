@@ -24,6 +24,7 @@ export class AccountService {
   }
 
   deleteAccount(id: string) {
+    AccountHandler.deletePasswordFromManager(id);
     return this.httpClient.delete(environment.localApi + '/accounts/' + id);
   }
 

@@ -1,6 +1,6 @@
 import { async, ComponentFixture, TestBed } from '@angular/core/testing';
-
 import { TabsComponent } from './tabs.component';
+import { AppModule } from "../app.module";
 
 describe('TabsComponent', () => {
   let component: TabsComponent;
@@ -8,7 +8,9 @@ describe('TabsComponent', () => {
 
   beforeEach(async(() => {
     TestBed.configureTestingModule({
-      declarations: [ TabsComponent ]
+      imports: [
+        AppModule
+      ]
     })
     .compileComponents();
   }));
@@ -21,5 +23,9 @@ describe('TabsComponent', () => {
 
   it('should create', () => {
     expect(component).toBeTruthy();
+  });
+
+  it('should have at least one tab', () => {
+    expect(component.tabs.length).toBeGreaterThan(0);
   });
 });
