@@ -28,6 +28,7 @@ export class GmailAuthComponent implements OnInit, OnDestroy {
   }
 
   ngOnInit() {
+    // Set up response handler for when we receive auth code
     const responseHandler = (request, response) => {
       const { query } = url.parse(request.url, true);
 
@@ -39,16 +40,21 @@ export class GmailAuthComponent implements OnInit, OnDestroy {
       }
     };
 
+    // create a server to listen for the response
     this.server = http.createServer(responseHandler).listen(this.LOCAL_SERVER_PORT);
+
+    // open auth URL in browser
     shell.openExternal(this.buildAuthURL());
   }
 
   ngOnDestroy() {
+    // close the server, otherwise it'll stay open even when we close the app
     this.server.close();
   }
 
   private async onCodeReceived(code) {
     try {
+      // try and construct the account
       await this.AccountHandler.constructGmailAccount(code);
       this.authStatus = 'complete';
     } catch (err) {

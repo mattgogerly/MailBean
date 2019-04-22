@@ -25,4 +25,28 @@ describe('GmailAuthComponent', () => {
   it('should create', () => {
     expect(component).toBeTruthy();
   });
+
+  it('shows the completion dialog when an account is added', () => {
+    component.authStatus = 'complete';
+    fixture.detectChanges();
+
+    const compiled = fixture.debugElement.nativeElement;
+    expect(compiled.querySelector('.mat-card-title').textContent).toContain('You\'re all set!');
+  });
+
+  it('shows waiting for authorisation dialog', () => {
+    component.authStatus = 'pending';
+    fixture.detectChanges();
+
+    const compiled = fixture.debugElement.nativeElement;
+    expect(compiled.querySelector('.mat-card-title').textContent).toContain('Waiting for authorisation');
+  });
+
+  it('shows the error dialog when adding account fails', () => {
+    component.authStatus = 'error';
+    fixture.detectChanges();
+
+    const compiled = fixture.debugElement.nativeElement;
+    expect(compiled.querySelector('.mat-card-title').textContent).toContain('That didn\'t work');
+  });
 });

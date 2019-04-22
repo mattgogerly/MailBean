@@ -1,4 +1,4 @@
-import { Component, OnInit} from '@angular/core';
+import { Component } from '@angular/core';
 import { AccountHandler } from '../utils/AccountHandler';
 import { Router } from '@angular/router';
 
@@ -7,7 +7,7 @@ import { Router } from '@angular/router';
   templateUrl: './other-auth.component.html',
   styleUrls: ['./other-auth.component.scss']
 })
-export class OtherAuthComponent implements OnInit {
+export class OtherAuthComponent {
 
   public authStatus = 'pending';
   public failure = false;
@@ -29,16 +29,15 @@ export class OtherAuthComponent implements OnInit {
     this.AccountHandler = new AccountHandler();
   }
 
-  ngOnInit() {
-  }
-
   async submit() {
+    // try and create the account
     const account = await this.AccountHandler.constructOtherAccount({
       name: this.name,
       email: this.email,
       password: this.password
     }, true);
 
+    // if it was successful we're done
     if (account !== false) {
       this.authStatus = 'complete';
 
@@ -46,6 +45,7 @@ export class OtherAuthComponent implements OnInit {
         this.router.navigate(['/main']);
       }, 2000);
     } else {
+      // if it failed move on to step 2
       this.step = 2;
     }
   }
@@ -65,6 +65,7 @@ export class OtherAuthComponent implements OnInit {
       }
     }, false);
 
+    // if it was successful we're done
     if (account !== false) {
       this.authStatus = 'complete';
 
@@ -72,6 +73,7 @@ export class OtherAuthComponent implements OnInit {
         this.router.navigate(['/main']);
       }, 2000);
     } else {
+      // otherwise make them try again
       this.authStatus = 'error';
     }
   }

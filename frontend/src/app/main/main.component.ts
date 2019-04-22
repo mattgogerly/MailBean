@@ -11,13 +11,15 @@ import { MessageListComponent } from '../message-list/message-list.component';
 export class MainComponent implements OnInit {
 
   loading = true;
-  @ViewChild(MessageListComponent) child: MessageListComponent ;
+  @ViewChild(MessageListComponent) child: MessageListComponent;
 
   constructor(private store: Store<any>) { }
 
   ngOnInit() {
+    // select whether we're waiting for a local response from the store
     this.store.pipe(select((state: any) => state.messages.localPending), take(2))
       .subscribe(pending => {
+        // if we're not pending then change loading to false
         if (!pending) {
           setTimeout(() => this.loading = false, 500);
         }
@@ -25,6 +27,8 @@ export class MainComponent implements OnInit {
   }
 
   scrollMessageList() {
+    // need to put this here since the HTMLElement is actually in this component
+    // just calls the scroll() method on MessageListComponent
     if (this.child != null) {
       this.child.scroll();
     }

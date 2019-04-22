@@ -43,6 +43,7 @@ export class AuthComponent implements OnInit {
   }
 
   beginAuth(provider: Provider) {
+    // separate flow for Gmail since it uses OAuth
     if (provider.name === 'Gmail') {
       this.router.navigate(['/auth/google']);
     } else {

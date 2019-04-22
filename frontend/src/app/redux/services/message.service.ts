@@ -34,7 +34,7 @@ export class MessageService {
   }
 
   sendMessage(id: string, info: NewMessageInfo) {
-    return this.httpClient.post(environment.localApi + '/smtp/' + id, info);
+    return this.httpClient.post<boolean>(environment.localApi + '/smtp/' + id, info);
   }
 
 }
