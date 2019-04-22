@@ -27,17 +27,12 @@ class FeatureWriter {
 
         try {
             // if the file doesn't already exist (don't want to overwrite)
-            if (checkNotExists(location)) {
+            if (!alreadyHasHeaders(location)) {
                 BufferedWriter bw = new BufferedWriter(new FileWriter(location));
 
                 // write each key followed by a comma (CSV)
                 for (String k : keys) {
-                    if (k.equals("true") || k.equals("false")) {
-                        bw.write(k.equals("true") ? 1 : 0);
-                        bw.write(",");
-                    } else {
-                        bw.write(k + ",");
-                    }
+                    bw.write(k + ",");
                 }
 
                 // write the classification header and a new line
@@ -62,7 +57,7 @@ class FeatureWriter {
 
         try {
             // if the file doesn't exist then write the headers first
-            if (checkNotExists(location)) {
+            if (!alreadyHasHeaders(location)) {
                 writeFeatureTitles(location, values);
             }
 
@@ -89,7 +84,7 @@ class FeatureWriter {
      * @param location The location of the file
      * @return Whether the file doesn't exist (true) or does (false)
      */
-    private static boolean checkNotExists(String location) {
+    private static boolean alreadyHasHeaders(String location) {
         try {
             BufferedReader br = new BufferedReader(new FileReader(location));
             String first = br.readLine();

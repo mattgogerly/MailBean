@@ -23,7 +23,7 @@ import java.util.Map;
  *
  * @author mattgogerly
  */
-public class Runner {
+public class Driver {
 
     private static Logger logger;
 
@@ -32,8 +32,24 @@ public class Runner {
      * @param args No arguments are expected
      */
     public static void main(String[] args) {
-        logger = LoggerFactory.getLogger(Runner.class);
-        runML("?:B->SIGMOID->40:B->SIGMOID->?");
+        logger = LoggerFactory.getLogger(Driver.class);
+        // extractFeatures("trec.mbox");
+        runML("?:B->SIN->6:B->SIN->?:B", false);
+//        runML("?:B->SIN->12:B->SIN->?:B", false);
+//        runML("?:B->SIN->24:B->SIN->?:B", false);
+//        runML("?:B->SIN->36:B->SIN->?:B", false);
+//        runML("?:B->SIN->40:B->SIN->?:B", false);
+//        runML("?:B->SIN->44:B->SIN->?:B", false);
+//        runML("?:B->SIN->48:B->SIN->?:B", false);
+//        runML("?:B->SIN->60:B->SIN->?:B", false);
+        runML("?->SIN->6->SIN->?", false);
+        runML("?->SIN->12->SIN->?", false);
+        runML("?->SIN->24->SIN->?", false);
+        runML("?->SIN->36->SIN->?", false);
+        runML("?->SIN->40->SIN->?", false);
+        runML("?->SIN->44->SIN->?", false);
+        runML("?->SIN->48->SIN->?", false);
+        runML("?->SIN->60->SIN->?", false);
     }
 
     /**
@@ -43,7 +59,7 @@ public class Runner {
      */
     private static void extractFeatures(String filename) {
         try {
-            URL resource = Runner.class.getClassLoader().getResource(filename);
+            URL resource = Driver.class.getClassLoader().getResource(filename);
             if (resource == null) {
                 throw new IOException("Classpath resource missing");
             }
@@ -56,28 +72,29 @@ public class Runner {
                 fe.extractFeatures();
                 Map<String, Object> values = fe.getValues();
 
-                FeatureWriter.writeFeatureTitles("output.csv", values);
-                FeatureWriter.writeFeatures("output.csv", "phishing", values);
+                FeatureWriter.writeFeatures("dataset.csv", "non-phishing", values);
             }
         } catch (IOException | URISyntaxException e) {
             logger.error("mbox file not found", e);
         }
     }
 
-    private static void runML(String architecture) {
+    private static void runML(String architecture, boolean save) {
         VersatileMLDataSet data = NeuralNets.processData();
         EncogModel model = NeuralNets.prepareModel(data, architecture);
         NormalizationHelper helper = data.getNormHelper();
-        
+
         BasicNetwork classifier = (BasicNetwork) NeuralNets.trainNeuralNetwork(model);
         TrainResults results = calculateMetrics(classifier, helper);
         printResults(architecture, results);
 
-        try {
-            SerializeObject.save(new File(architecture), classifier);
-            SerializeObject.save(new File(architecture + " - Normaliser"), helper);
-        } catch (IOException e) {
-            e.printStackTrace();
+        if (save) {
+            try {
+                SerializeObject.save(new File("classifier"), classifier);
+                SerializeObject.save(new File("normaliser"), helper);
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
         }
 
         Encog.getInstance().shutdown();
@@ -109,7 +126,6 @@ public class Runner {
                 trueNegative++;
                 correct++;
             }
-
 
             if (expected.equals("phishing") && predictedClass.equals("non-phishing"))
                 falseNegative++;
@@ -148,6 +164,11 @@ public class Runner {
         System.out.println("F1: " + r.getF1());
         System.out.println("FP rate: " + r.getFpr());
         System.out.println("FN rate: " + r.getFnr());
+
+        System.out.println();
+        System.out.printf("Excel friendly: %f,%f,%f,%f,%f,%f", r.getAccuracy(), r.getPrecision(), r.getRecall(),
+                r.getF1(), r.getFpr(), r.getFnr());
+        System.out.println();
     }
 
 }

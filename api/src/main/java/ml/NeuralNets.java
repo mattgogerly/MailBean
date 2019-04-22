@@ -18,7 +18,7 @@ import java.net.URISyntaxException;
 import java.net.URL;
 
 /**
- * Class to facilitate obtaining data from files and training a neural network.
+ * Class to facilitate obtaining data from files and training a neural classifier.
  *
  * @author mattgogerly
  */
@@ -63,11 +63,11 @@ class NeuralNets {
         data.defineSourceColumn("fromSenderSimilar", ColumnType.nominal);
         data.defineSourceColumn("spanTime", ColumnType.continuous);
         data.defineSourceColumn("numUniqueDomains", ColumnType.continuous);
-        data.defineSourceColumn("numShortenedUrls", ColumnType.continuous);
+        data.defineSourceColumn("numUrlShortened", ColumnType.continuous);
         data.defineSourceColumn("bccExists", ColumnType.nominal);
         data.defineSourceColumn("fromNameExists", ColumnType.nominal);
         data.defineSourceColumn("fromNonEnglish", ColumnType.nominal);
-        data.defineSourceColumn("maxDots", ColumnType.continuous);
+        data.defineSourceColumn("maximalDots", ColumnType.continuous);
         data.defineSourceColumn("numCc", ColumnType.continuous);
         data.defineSourceColumn("noReply", ColumnType.nominal);
         data.defineSourceColumn("subjectExists", ColumnType.nominal);
@@ -109,7 +109,7 @@ class NeuralNets {
 
         File source;
         try {
-            final URL csv = Runner.class.getClassLoader().getResource(filename);
+            final URL csv = Driver.class.getClassLoader().getResource(filename);
             if (csv == null) {
                 throw new IOException("Classpath resource missing");
             }
