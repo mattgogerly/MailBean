@@ -34,22 +34,8 @@ public class Driver {
     public static void main(String[] args) {
         logger = LoggerFactory.getLogger(Driver.class);
         // extractFeatures("trec.mbox");
-        runML("?:B->SIN->6:B->SIN->?:B", false);
-//        runML("?:B->SIN->12:B->SIN->?:B", false);
-//        runML("?:B->SIN->24:B->SIN->?:B", false);
-//        runML("?:B->SIN->36:B->SIN->?:B", false);
-//        runML("?:B->SIN->40:B->SIN->?:B", false);
-//        runML("?:B->SIN->44:B->SIN->?:B", false);
-//        runML("?:B->SIN->48:B->SIN->?:B", false);
-//        runML("?:B->SIN->60:B->SIN->?:B", false);
-        runML("?->SIN->6->SIN->?", false);
-        runML("?->SIN->12->SIN->?", false);
-        runML("?->SIN->24->SIN->?", false);
-        runML("?->SIN->36->SIN->?", false);
-        runML("?->SIN->40->SIN->?", false);
-        runML("?->SIN->44->SIN->?", false);
-        runML("?->SIN->48->SIN->?", false);
-        runML("?->SIN->60->SIN->?", false);
+
+        runML("?->SIGMOID->36->SIGMOID->?", false);
     }
 
     /**

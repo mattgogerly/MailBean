@@ -20,7 +20,6 @@ final class MboxParser {
      * Intentionally empty Constructor
      */
     private MboxParser() {
-
     }
 
     /**
