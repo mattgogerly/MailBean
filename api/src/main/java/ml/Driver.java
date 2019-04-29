@@ -33,9 +33,16 @@ public class Driver {
      */
     public static void main(String[] args) {
         logger = LoggerFactory.getLogger(Driver.class);
-        // extractFeatures("trec.mbox");
 
-        runML("?->SIGMOID->36->SIGMOID->?", false);
+        if (args[0].equals("extract")) {
+            extractFeatures(args[1]);
+        } else if (args[0].equals("train")) {
+            runML(args[1], Boolean.valueOf(args[2]));
+        }
+
+        runML("?->SIGMOID->12->SIGMOID->56->SIGMOID->?", false);
+        runML("?->SIGMOID->12->SIGMOID->58->SIGMOID->?", false);
+        runML("?->SIGMOID->12->SIGMOID->62->SIGMOID->?", false);
     }
 
     /**

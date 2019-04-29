@@ -12,7 +12,7 @@ import java.io.Serializable;
  */
 @Getter
 @Setter
-public class SerializableHeader implements Serializable {
+public class SerialisableHeader implements Serializable {
 
     private String name;
     private String value;
@@ -21,7 +21,7 @@ public class SerializableHeader implements Serializable {
      * @param name Name of the header, e.g. Content-Type
      * @param value Value of the header, e.g. application/json
      */
-    public SerializableHeader(String name, String value) {
+    public SerialisableHeader(String name, String value) {
         this.name = name;
         this.value = value;
     }

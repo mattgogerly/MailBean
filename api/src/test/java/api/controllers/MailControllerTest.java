@@ -97,7 +97,7 @@ public class MailControllerTest {
     public void deleteMessageFromFolder() throws Exception {
         when(mailService.deleteMessage("123", 1L)).thenReturn(true);
 
-        this.mockMvc.perform(delete("/imap/123/1/delete"))
+        this.mockMvc.perform(delete("/imap/123/1"))
                 .andDo(print())
                 .andExpect(status().isOk())
                 .andExpect(content().string(containsString("true")));
@@ -107,7 +107,7 @@ public class MailControllerTest {
     public void markMessageRead() throws Exception {
         when(mailService.markRead("123", 1L)).thenReturn(true);
 
-        this.mockMvc.perform(put("/imap/123/1/read"))
+        this.mockMvc.perform(put("/imap/123/1"))
                 .andDo(print())
                 .andExpect(status().isOk())
                 .andExpect(content().string(containsString("true")));

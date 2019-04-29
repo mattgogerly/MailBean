@@ -26,11 +26,11 @@ export class MessageService {
   }
 
   delete(id: string, msg: DetailedMessage) {
-    return this.httpClient.delete<boolean>(environment.localApi + '/imap/' + id + '/' + msg.uid + '/delete');
+    return this.httpClient.delete<boolean>(environment.localApi + '/imap/' + id + '/' + msg.uid);
   }
 
   markRead(id: string, msg: DetailedMessage) {
-    return this.httpClient.put<boolean>(environment.localApi + '/imap/' + id + '/' + msg.uid + '/read', {});
+    return this.httpClient.put<boolean>(environment.localApi + '/imap/' + id + '/' + msg.uid, {});
   }
 
   sendMessage(id: string, info: NewMessageInfo) {

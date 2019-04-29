@@ -485,10 +485,10 @@ public class MailService {
 
         // get headers from the message
         Enumeration<Header> headersObjs = m.getAllHeaders();
-        ArrayList<SerializableHeader> headers = new ArrayList<>();
+        ArrayList<SerialisableHeader> headers = new ArrayList<>();
         while (headersObjs.hasMoreElements()) {
             Header h = headersObjs.nextElement();
-            SerializableHeader header = new SerializableHeader(h.getName(), h.getValue());
+            SerialisableHeader header = new SerialisableHeader(h.getName(), h.getValue());
             headers.add(header);
         }
 

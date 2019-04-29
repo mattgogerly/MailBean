@@ -40,7 +40,7 @@ public class DetailedMessage implements Serializable {
     @Lob
     @Basic
     @JsonIgnore
-    private ArrayList<SerializableHeader> headers;
+    private ArrayList<SerialisableHeader> headers;
 
     @Column(name = "received", length = 512)
     private Long received;
@@ -98,7 +98,7 @@ public class DetailedMessage implements Serializable {
      * @param content The content of the message
      * @param folder The folder the message belongs to
      */
-    public DetailedMessage(MessageId id, Integer messageNum, ArrayList<SerializableHeader> headers, Long received,
+    public DetailedMessage(MessageId id, Integer messageNum, ArrayList<SerialisableHeader> headers, Long received,
                            String sender, ArrayList<String> to, ArrayList<String> cc, String subject, Boolean seen,
                            Boolean phishing, String content, DetailedFolder folder) {
         this.id = id;

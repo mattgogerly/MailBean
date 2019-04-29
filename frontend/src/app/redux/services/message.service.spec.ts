@@ -78,7 +78,7 @@ describe('MessageService', () => {
         expect(data).toBeTruthy();
       });
 
-      const req = httpMock.expectOne('http://localhost:36024/imap/test/1/delete');
+      const req = httpMock.expectOne('http://localhost:36024/imap/test/1');
       expect(req.request.method).toBe('DELETE');
 
       req.flush('true');
@@ -111,7 +111,7 @@ describe('MessageService', () => {
         expect(data).toBeTruthy();
       });
 
-      const req = httpMock.expectOne('http://localhost:36024/imap/test/1/read');
+      const req = httpMock.expectOne('http://localhost:36024/imap/test/1');
       expect(req.request.method).toBe('PUT');
 
       req.flush('true');

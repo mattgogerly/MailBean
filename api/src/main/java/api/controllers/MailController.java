@@ -70,7 +70,7 @@ public class MailController {
      * @param uid UID of the message
      * @return True if successful or false otherwise
      */
-    @DeleteMapping("/imap/{account}/{message}/delete")
+    @DeleteMapping("/imap/{account}/{message}")
     public boolean deleteMessageFromFolder(@PathVariable(name = "account") String account,
                                            @PathVariable(name = "message") Long uid) {
         return mailService.deleteMessage(account, uid);
@@ -83,7 +83,7 @@ public class MailController {
      * @param uid UID of the message
      * @return True if successful or false otherwise
      */
-    @PutMapping("/imap/{account}/{message}/read")
+    @PutMapping("/imap/{account}/{message}")
     public boolean markMessageRead(@PathVariable(name = "account") String account,
                                    @PathVariable(name = "message") Long uid) {
         return mailService.markRead(account, uid);
