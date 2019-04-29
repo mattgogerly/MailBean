@@ -40,9 +40,7 @@ public class Driver {
             runML(args[1], Boolean.valueOf(args[2]));
         }
 
-        runML("?->SIGMOID->12->SIGMOID->56->SIGMOID->?", false);
-        runML("?->SIGMOID->12->SIGMOID->58->SIGMOID->?", false);
-        runML("?->SIGMOID->12->SIGMOID->62->SIGMOID->?", false);
+        runML("?:B->SIN->36:B->SIN->?", false);
     }
 
     /**
