@@ -542,7 +542,7 @@ public class MailService {
                     Long uid = uf.getUID(m);
 
                     // try and get the message locally
-                    DetailedMessage dm = this.messageRepository.findById(uid).orElse(null);
+                    DetailedMessage dm = this.messageRepository.findByIdUidAndAccount_Id(uid, account.getId());
                     if (dm == null) {
                         // if we can't find it then recreate it
                         dm = processNewMessage(account, m, df, uf);
