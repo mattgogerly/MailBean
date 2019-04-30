@@ -217,7 +217,7 @@ public class FeatureExtractor {
 
     /**
      * Get the number of links where the text doesn't match the href attribute and put it under the numLinksNonMatching key
-     * Only consider links where the text is actually a URL so ignore <\a href="bla.com">Click Here!<\/a>.
+     * Only consider links where the text is actually a URL so ignore <a href="bla.com">Click Here!</a>.
      */
     private void getNumLinksNonMatching() {
         Elements links = this.body.select("a[href]");

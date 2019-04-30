@@ -35,6 +35,7 @@ public class NewMessageInfo {
      *
      * @param to List of to addresses
      * @param cc List of cc addresses
+     * @param bcc List of bcc addresses
      * @param subject Subject of the message
      * @param content Content of the message
      * @param reply Whether the message is a reply

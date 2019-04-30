@@ -49,7 +49,9 @@ public class Driver {
     /**
      * Load in a specified file and extract the features from each email in the file. The result is written to
      * output.csv.
+     *
      * @param filename The classpath filename to load data and extract features from
+     * @param clazz Class of the data (phishing or non-phishing)
      */
     private static void extractFeatures(String filename, String clazz) {
         try {

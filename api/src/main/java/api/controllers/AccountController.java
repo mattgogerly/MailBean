@@ -15,7 +15,7 @@ import java.util.Map;
 /**
  * A REST Controller for endpoints relating to Accounts.
  *
- * @author mattgogerly 
+ * @author mattgogerly
  */
 @RestController
 public class AccountController {
@@ -49,6 +49,10 @@ public class AccountController {
 
     /**
      * Test that we can connect to an Account using the provided details.
+     *
+     * @param account Account object to test
+     * @param password Password to test
+     * @return Result of test
      */
     @PostMapping("/accounts/test/{password}")
     public boolean testAccount(@RequestBody Account account, @PathVariable(name = "password") String password) {

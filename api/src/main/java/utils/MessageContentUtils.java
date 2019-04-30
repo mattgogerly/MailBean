@@ -21,6 +21,8 @@ public final class MessageContentUtils {
     /**
      * Adapted from https://stackoverflow.com/a/36932127
      * Utility method to get the body of a message
+     *
+     * @param msg Message to extract body from
      * @return String body of the message
      * @throws IOException when file is not found/other file errors
      * @throws MessagingException when body of message is invalid
@@ -41,6 +43,7 @@ public final class MessageContentUtils {
     /**
      * Adapted from https://stackoverflow.com/a/36932127
      * Utility method to get the body of a multipart message
+     *
      * @param multipart the part we are extracting from
      * @return String of multipart section of body
      * @throws IOException when file is not found/other file errors
@@ -70,6 +73,7 @@ public final class MessageContentUtils {
     /**
      * Adapted from https://stackoverflow.com/a/36932127
      * Utility method to get the body of a multipart message
+     *
      * @param part the part we are extracting from
      * @return String of multipart section of body
      * @throws IOException when file is not found/other file errors
