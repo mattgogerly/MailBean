@@ -2,7 +2,7 @@ import { Folder } from './folder';
 
 export class DetailedMessage {
   folder: Folder;
-  uid: number;
+  id: MessageId;
   messageNum: number;
   received: string;
   sender: string;
@@ -12,4 +12,8 @@ export class DetailedMessage {
   seen: boolean;
   content: string;
   phishing: boolean;
+}
+
+class MessageId {
+  uid: number;
 }

@@ -34,7 +34,7 @@ export class MessageComponent implements OnInit {
       .subscribe(messageState => {
         // if there are messages then find the current message
         if (messageState.messages.length > 0) {
-          this.message = messageState.messages.find(m => m.uid === messageState.currentMessage);
+          this.message = messageState.messages.find(m => m.id.uid === messageState.currentMessage);
         } else {
           this.message = undefined;
         }

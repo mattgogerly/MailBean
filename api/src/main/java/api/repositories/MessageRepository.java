@@ -1,6 +1,7 @@
 package api.repositories;
 
 import api.models.DetailedMessage;
+import api.models.MessageId;
 import org.springframework.data.repository.CrudRepository;
 import org.springframework.stereotype.Repository;
 
@@ -12,7 +13,7 @@ import java.util.List;
  * @author mattgogerly
  */
 @Repository
-public interface MessageRepository extends CrudRepository<DetailedMessage, Long> {
+public interface MessageRepository extends CrudRepository<DetailedMessage, MessageId> {
 
     /**
      * Finds all DetailedMessages belonging to a given Account
@@ -36,4 +37,13 @@ public interface MessageRepository extends CrudRepository<DetailedMessage, Long>
      * @param id The relevant Account id
      */
     void deleteAllByAccount_Id(String id);
+
+    /**
+     * Finds DetailedMessage with given UID.
+     *
+     * @param uid uid of the message
+     * @param accountId id of the Account
+     * @return DetailedMessage with that UID
+     */
+    DetailedMessage findByIdUidAndAccount_Id(Long uid, String accountId);
 }

@@ -59,7 +59,7 @@ export function messageReducer(
     case MessageActions.ActionTypes.ReadMessagePending: {
       let currentMessage = null;
       const messages = state.messages.map(m => {
-        if (m.uid === action.payload.uid) {
+        if (m.id.uid === action.payload.id.uid) {
           currentMessage = {...m, seen: true};
           return currentMessage;
         }
@@ -91,12 +91,12 @@ export function messageReducer(
     case MessageActions.ActionTypes.DeleteMessagePending: {
       let folder;
       const index = state.messages.findIndex(m =>  {
-        if (m.uid === action.payload.uid) {
+        if (m.id.uid === action.payload.id.uid) {
           folder = m.folder.name;
           return m;
         }
       });
-      const newMessagesArr = state.messages.filter(m => m.uid !== action.payload.uid);
+      const newMessagesArr = state.messages.filter(m => m.id.uid !== action.payload.id.uid);
 
       const folderMessages = newMessagesArr.filter(m => m.folder.name === folder);
       let newCurrentMessage;
@@ -120,7 +120,7 @@ export function messageReducer(
       return Object.assign({}, state, {
         messages: newMessagesArr,
         folders: folders,
-        currentMessage: newCurrentMessage.uid,
+        currentMessage: newCurrentMessage.id.uid,
         error: false
       });
     }

@@ -33,7 +33,7 @@ export class MessageListComponent implements OnInit {
             return b.received - a.received;
           });
 
-        this.currentMessage = messageState.messages.find(m => m.uid === messageState.currentMessage);
+        this.currentMessage = messageState.messages.find(m => m.id.uid === messageState.currentMessage);
         this.refreshing = messageState.serverPending || messageState.localPending;
       });
 
@@ -83,7 +83,7 @@ export class MessageListComponent implements OnInit {
       this.store.dispatch(new ReadMessagePending(message));
     }
 
-    this.store.dispatch(new ChangeActiveMessage(message.uid));
+    this.store.dispatch(new ChangeActiveMessage(message.id.uid));
   }
 
   refresh() {
@@ -98,7 +98,7 @@ export class MessageListComponent implements OnInit {
   delete(message: DetailedMessage) {
     this.store.dispatch(new DeleteMessagePending(this.currentMessage));
 
-    if (message.uid === this.currentMessage.uid) {
+    if (message.id.uid === this.currentMessage.id.uid) {
       if (this.messages.length !== 1) {
         this.moveDown();
       } else {
@@ -108,7 +108,7 @@ export class MessageListComponent implements OnInit {
   }
 
   moveDown() {
-    const currentIndex = this.messages.findIndex(m => m.uid === this.currentMessage.uid);
+    const currentIndex = this.messages.findIndex(m => m.id.uid === this.currentMessage.id.uid);
     const newIndex = currentIndex + 1;
 
     if (newIndex > this.messages.length - 1) {
@@ -130,7 +130,7 @@ export class MessageListComponent implements OnInit {
   }
 
   moveUp() {
-    const currentIndex = this.messages.findIndex(m => m.uid === this.currentMessage.uid);
+    const currentIndex = this.messages.findIndex(m => m.id.uid === this.currentMessage.id.uid);
     const newIndex = currentIndex - 1;
 
     if (newIndex < 0) {
