@@ -36,7 +36,7 @@
   </div>
 
   <div class="alert alert-danger" role="alert" *ngIf="message.phishing">
-    <b>Danger!</b> This message was automatically flagged as phishing or spam. Be careful!
+    <b>Danger!</b> This message was automatically flagged as phishing. Be careful!
   </div>
 
   <webview class="message" [attr.src]="'data:text/html,' + message.content"></webview>
