@@ -1,13 +1,11 @@
-<div class="list-controls" fxLayout="row" fxLayoutAlign="center center" fxLayoutGap="75px">
-  <div fxLayout="row" fxLayoutGap="3px">
-    <button [disabled]="refreshing" mat-raised-button class="compose-button" color="primary" (click)="refresh()">
-      <i *ngIf="!refreshing" class="material-icons">refresh</i>
-      <mat-spinner *ngIf="refreshing" [diameter]="30"></mat-spinner>
-    </button>
-    <button mat-raised-button class="compose-button" color="primary" (click)="compose()">
-      <i class="material-icons">send</i>
-    </button>
-  </div>
+<div class="list-controls" fxLayout="row" fxLayoutAlign="center center" fxLayoutGap="20px">
+  <button [disabled]="refreshing" mat-raised-button class="compose-button" color="primary" (click)="refresh()">
+    <i *ngIf="!refreshing" class="material-icons">refresh</i>
+    <mat-spinner *ngIf="refreshing" [diameter]="30"></mat-spinner>
+  </button>
+  <button mat-raised-button class="compose-button" color="primary" (click)="compose()">
+    <i class="material-icons">send</i>
+  </button>
 </div>
 
 <div *ngIf="messages.length > 0">
