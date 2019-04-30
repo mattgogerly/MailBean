@@ -37,10 +37,12 @@ public class Driver {
     public static void main(String[] args) {
         logger = LoggerFactory.getLogger(Driver.class);
 
-        if (args[0].equals("extract")) {
-            extractFeatures(args[1], args[2]);
-        } else if (args[0].equals("train")) {
-            runML(args[1], Boolean.valueOf(args[2]));
+        if (args.length == 3) {
+            if (args[0].equals("extract")) {
+                extractFeatures(args[1], args[2]);
+            } else if (args[0].equals("train")) {
+                runML(args[1], Boolean.valueOf(args[2]));
+            }
         }
     }
 
