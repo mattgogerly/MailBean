@@ -1,4 +1,4 @@
-<div class="list-controls" fxLayout="row" fxLayoutAlign="center center" fxLayoutGap="10px">
+<div class="list-controls" fxLayout="row" fxLayoutAlign="center center" fxLayoutGap="75px">
   <div fxLayout="row" fxLayoutGap="3px">
     <button [disabled]="refreshing" mat-raised-button class="compose-button" color="primary" (click)="refresh()">
       <i *ngIf="!refreshing" class="material-icons">refresh</i>
@@ -8,10 +8,6 @@
       <i class="material-icons">send</i>
     </button>
   </div>
-  <mat-form-field class="search">
-    <input matInput placeholder="Search {{currentFolder | prettyFolder | titlecase}}">
-    <span matSuffix><i class="material-icons md-18">search</i></span>
-  </mat-form-field>
 </div>
 
 <div *ngIf="messages.length > 0">

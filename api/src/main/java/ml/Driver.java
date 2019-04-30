@@ -29,18 +29,19 @@ public class Driver {
 
     /**
      *
-     * @param args No arguments are expected
+     * @param args First argument should be either extract or train. For extraction the second argument should be
+     *             a filename in the classpath and the third argument should be the class (phishing/non-phishing). For
+     *             training the second argument should be the network architecture and the third argument is true/false
+     *             dependent on whether saving the network is desired.
      */
     public static void main(String[] args) {
         logger = LoggerFactory.getLogger(Driver.class);
 
         if (args[0].equals("extract")) {
-            extractFeatures(args[1]);
+            extractFeatures(args[1], args[2]);
         } else if (args[0].equals("train")) {
             runML(args[1], Boolean.valueOf(args[2]));
         }
-
-        runML("?:B->SIN->36:B->SIN->?", false);
     }
 
     /**
@@ -48,7 +49,7 @@ public class Driver {
      * output.csv.
      * @param filename The classpath filename to load data and extract features from
      */
-    private static void extractFeatures(String filename) {
+    private static void extractFeatures(String filename, String clazz) {
         try {
             URL resource = Driver.class.getClassLoader().getResource(filename);
             if (resource == null) {
@@ -63,7 +64,7 @@ public class Driver {
                 fe.extractFeatures();
                 Map<String, Object> values = fe.getValues();
 
-                FeatureWriter.writeFeatures("dataset.csv", "non-phishing", values);
+                FeatureWriter.writeFeatures("dataset.csv", clazz, values);
             }
         } catch (IOException | URISyntaxException e) {
             logger.error("mbox file not found", e);
