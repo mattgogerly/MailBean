@@ -73,14 +73,4 @@ public class MessageContentUtilsTest {
 
         assertEquals("This is test content", MessageContentUtils.getMessageContent(message));
     }
-
-    @Test
-    public void testAlternativeMultipart() {
-        // TODO
-    }
-
-    @Test
-    public void testQPDecoderStream() {
-        // TODO
-    }
 }
