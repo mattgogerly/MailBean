@@ -34,13 +34,15 @@ public class Driver {
     public static void main(String[] args) {
         logger = LoggerFactory.getLogger(Driver.class);
 
-        if (args[0].equals("extract")) {
-            extractFeatures(args[1]);
-        } else if (args[0].equals("train")) {
-            runML(args[1], Boolean.valueOf(args[2]));
+        if (args.length > 0) {
+            if (args[0].equals("extract")) {
+                extractFeatures(args[1]);
+            } else if (args[0].equals("train")) {
+                runML(args[1], Boolean.valueOf(args[2]));
+            }
         }
 
-        runML("?:B->SIN->36:B->SIN->?", false);
+        runML("?:B->SIGMOID->47:B->SIGMOID->?", true);
     }
 
     /**
