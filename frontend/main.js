@@ -74,7 +74,6 @@ function createWindow(type) {
       }
     });
 
-    win.webContents.openDevTools();
     win.loadFile(path.join(filepath, '/dist/index.html'));
 
     if (loadingWin != null) {
