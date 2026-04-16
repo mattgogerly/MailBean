@@ -48,7 +48,7 @@
         <dependency>
             <groupId>com.sun.mail</groupId>
             <artifactId>jakarta.mail</artifactId>
-            <version>1.6.3</version>
+            <version>1.6.8</version>
         </dependency>
 
         <!-- https://mvnrepository.com/artifact/org.mnode.mstor/mstor -->
